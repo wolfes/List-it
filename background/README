@@ -1,0 +1,16 @@
+@folddesc Contains the persistent part of the chrome extension:
+  - Model API: 
+      storeNotes: Notes in localStorage
+      storeLogs: Activity Logs in localStorage
+      dbInfo: User email/hashpass
+  - Controller API:
+      CRUD for notes, logs, users
+      Sync for notes, logs
+      Generic extras: set up chrome-specific handlers
+  - Messenger 
+      Recieves sidebar messages, sent to controller.
+      Sends published messages to sidebar autonomously.
+  - Server API:
+      Syncing of Notes
+      Syncing of Logs
+      Registration / Login

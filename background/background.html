@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html><head>
+
+<!-- Libraries -->
+<script src="../lib/jquery-1.7.2.min.js"></script>
+<script src="../lib/underscore-1.3.3.js"></script>
+<script src="../lib/backbone.js"></script>
+<!--script src="shortcut.js"></script-->
+
+<!-- Model -->
+<script src="modelevent.js"></script>
+
+<script src="storeNotes.js"></script>
+<script src="dbNotes.js"></script>
+<script src="../common/LogType.js"></script>
+<!--script src="dbLogs.js"></script-->
+<script src="storeLogs.js"></script>
+<script src="dbInfo.js"></script>
+<script src="model.js"></script>
+
+
+<!-- Messenger(s) to View(s) -->
+<script src="sidebarMessenger.js"></script>
+<script src="sidebarManager.js"></script>
+<script src="optionMessenger.js"></script>
+
+<!-- Controller -->
+<script src="controller.js"></script>
+<script src="server.js"></script> 
+
+<!-- Utilities -->
+<script src="../util.js"></script>
+
+
+<script>
+  // Setup Messenger to sidebars and options pages.
+  sidebar.msg.setupSubscribers();
+  sidebar.mgr.setup();
+  options.setupSubscribers();
+
+  chrome.extension.onRequest.addListener(
+    function(request, sender, sendResponse) {
+      switch(request["action"]) {
+      case "activate":
+        debug("activate request heard");
+        sidebar.mgr.toggle(sender.tab);
+        break;
+      case "getOpenHotkeyData":
+        sendResponse({
+          oldHotkey: controller.getOldHotkey(),
+          newHotkey: controller.getNewHotkey()
+        });
+        break;
+      }
+  });
+</script>
+
+
+</head>
+<body>
+
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+@folddesc Options page for registering and login:
+  - Controller file for transparent requests to background's controller.
+  - Messenger for recieving requests from views,
+    and relaying the background model's published updates to the views.

@@ -1,0 +1,6 @@
+@folddesc Contains the persistent part of the chrome extension:
+  - Model API with underlying database (db) for notes and logs.
+  - Controller for updating model
+  - Messenger for recieving controller requests from views,
+    and relaying the model's published updates to the views.
+  - Server connection for optional syncing of notes/logs with server.

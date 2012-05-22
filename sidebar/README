@@ -1,0 +1,15 @@
+@folddesc  Contains the sidebar view components, including:
+  - VIEW consists of:
+    - Backbone Views
+  - Model consists of:
+    - Backbone Models in /sidebar code
+    - HTML5 localStorage in /background
+  - Controller:
+    - Main controller is in /background
+  - VENT: A single Pub/Sub message hub.
+  - Messenger:
+    - Recieves proxied messages from /background,
+      republishes them on vent.
+  - Settings:
+    - Feature Toggles: Boolean values turn features on/off.
+  - extras: shortcuts, text-to-speech, notifications, etc...

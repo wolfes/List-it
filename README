@@ -1,0 +1,11 @@
+@folddesc Contains major elements of List-it Chrome Extension / HTML5 Web-App
+  - Libraries:  Google Closure, jQuery, jQuery UI
+  - manifest.json  Extension description file.
+  - background/*  Persistent model state, connection to server and views.
+  - sidebar/*  Sidebar code for displaying List-it UI.
+  - options/*  Options page for registering, logging in, & helpful info.
+  - util.js  Utility functions for logging debug messages and encoding.
+  - index.html The HTML5 WebApp using the Chrome Ext. Code Base!
+  -- missing options page, 
+  --- To login for debugging: model.setValidUserInfo('email', 'password')
+  --- To force a sync: controller.sync() or click Sync button on UI.

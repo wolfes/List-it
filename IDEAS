@@ -1,0 +1,72 @@
+Type of Note: To-do / Tasks
+Properties
+	Time
+		to input: short (class just ended, gotta jot this down quick) vs (have time)
+		to retrieve: 
+	Motivation / anti-motivations
+	Need to fight Procrastination reflex!
+		
+	Modes of Interaction
+		Active User: Pulls information X (searches, scrolls, etc)
+			User Mode: Knows what they want
+			X: View/edit a particular note
+				
+			User Mode: Uncertain what they want || knows they want "something"
+			X: certain types of notes [ todos, ? ]
+				Icons: (/!\) one per note + one under search bar of form (/!\ #)
+					Displays num. of notes of that type (/!\ 20)
+			
+		Active System: Pushes info to user about X
+			X: A Particular Note (as reminder)
+				HTML5 desktop notification?
+				Float note to top + glow?
+			X: A category of note
+				Make icons (ie /!\ 20) glow/pulse/demand attention
+			X: 
+
+		Passive System: Give extra focus to X, without directly grabbing user’s attention.
+			X: A Particular Note
+				Float to top
+			X: A set of notes -- Passive Reminding
+				Float notes to top
+Special icon for passive reminder to view them only? oO
+
+			X: A Category of note -- Passive Reminding
+				Special identifiers (only works for larger screens)
+(/!\) icon on note, (/!\ ###) on ui for # notes with /!\
+	Click /!\ ### icon to show these notes only
+possibly a “show only /!\ notes” option
+Like the #hide option? ya
+				floating note to top
+			X: 
+
+	Push vs Pull
+		Push: System pushes information towards user
+		Pull: User actively grabs info from system
+
+Emergent / Common Ideas from other tools
+Twitter
+	#tags, @person
+Gmail
+	(!) red-star/green-checkmark/etc icons
+
+Interaction to mark a note as a todo item
+	Mouse
+		Select To-do from a list of types
+			Advantages: Visual, knowledge in world
+			Disadvantages: Takes up screen space
+		Having option like the <| option to “drop down” more options.
+			Allows people to ignore small icon if unwanted.
+			However, curious people will likely get confused.
+			Have it be a “turn on / turn off” able system like labs?
+	Keyboard
+		Include “#todo” in note (or something like this)
+		Auto-complete #tags for note creation/edit through magic?
+			Advantages: 
+			Disadvantages: 
+				requires use of tags
+requires more typing (less ideal for mobile), 
+requires remembering “#todo” - not so bad?
+
+Search Improvements	
+	Always provide list of #tags to help user remember “knowledge in the world” !!!

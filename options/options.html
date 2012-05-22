@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+<script src="../lib/jquery-1.5.2.min.js"></script>
+<script src="../lib/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script src="../lib/closure-library/closure/goog/base.js"></script>
+<script>
+  goog.require('goog.dom');
+  goog.require('goog.events');
+  goog.require('goog.ui.Component');
+  goog.require('goog.pubsub.PubSub');
+  goog.require('goog.debug.Console');
+</script>
+
+<link rel="stylesheet" type="text/css" href="style.css" />
+
+<!--script src="views.js"></script-->
+<script src="../background/controllerAccess.js"></script>
+<script src="../background/modelevent.js"></script>
+<script src="messenger.js"></script>
+
+<script src="accountportal.js"></script>
+
+<script src="../util.js"></script>
+
+<title>About List.it</title>
+</head>
+<body onload="messenger.setupConnection();">
+
+<div class="container">
+  <div id="title">
+    <span class="bigger">list.it</span>
+  </div>
+  
+  <div id="sections">
+  <table><tr>
+    <td>
+    <div id="gettingStarted" class="item">
+      <h3>Getting started</h3>
+
+      <p>Here are some tips to help you get going with list.it:</p>
+      <ul>
+        <li>Open and close list.it by clicking on the <img src="../img/listit-icon.png" /> icon in the upper right of your screen.
+	<li>Make new notes by typing into the box at the top of list.it's sidebar.</li>
+	<li>Search your notes by typing into the <img src="../img/search.png" /> (search bar) in the sidebar.</li>
+	<li>Delete notes by clicking on <img src="../img/x.png" />.</li>
+	<li>Edit notes by clicking one and typing, when you select
+      something else, the note will automatically save.</li>
+        <li>Coming soon: Note reordering + Saved Searches!</li>
+      </ul>
+      <p>If you have any questions, feel free to email <a
+          href="mailto:listit@csail.mit.edu">listit@csail.mit.edu</a>.<p>
+      <p> Looking forward to hearing from you, <br /> <br />
+          Wolfe Styke + electronic max + Prof. David Karger
+      </p>
+      <p> list-it team at MIT CSAIL </p>
+    </div>
+    </td>
+
+    
+    <td id="loginRegisterPane">
+      <script>
+        var p = new AccountPortal();
+        p.render(gid('loginRegisterPane'))
+      </script>
+    </td>
+  </tr></table>
+  </div> <!-- /sections -->
+      
+</div> <!--/container-->
+</body>
+</html>

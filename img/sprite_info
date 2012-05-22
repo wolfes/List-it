@@ -1,0 +1,1 @@
+convert listit-icon.png xIcon10.png dot16.png pin.png pin_plus.png plus.png arrow-left.png arrow-down.png arrowstill.png settings_white.png -append result-sprite.png

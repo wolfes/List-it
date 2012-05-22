@@ -1,0 +1,161 @@
+<!--!DOCTYPE html-->
+<html>
+<head>
+<title>List-it</title>
+<meta name="AUTHOR" CONTENT="Wolfe Styke">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<link rel="apple-touch-icon" href="img/listit-icon.png"/>
+<link rel="icon" type="image/x-icon" href="img/listit-icon.png" />
+
+
+<!-- LIBRARIES -->
+<script src="lib/jquery-1.7.2.min.js"></script>
+<script src="lib/jquery-ui-1.8.20.sort.min.js"></script>
+<script src="lib/underscore-1.3.3.js"></script>
+<script src="lib/backbone.js"></script>
+<script src="lib/doT.js"></script>
+<script src="sidebar/templates.js"></script>
+<script src="background/shortcut.js"></script>
+
+<link rel="stylesheet" href="sidebar/style.css"/>
+
+<script>
+isChromeExt = function() {
+  if (window.location.hasOwnProperty('origin')) {
+    return window.location.origin.search('chrome-extension://') === 0;
+  } else if (window.location.hasOwnProperty('href')) {
+    return window.location.href.search('chrome-extension://') === 0;
+  }
+  return false;
+};
+</script>
+
+<!-- Web/BG Only -->
+<script src="background/modelevent.js"></script><!-- Proxy? -->
+<script src="background/storeNotes.js"></script>
+<script src="background/dbNotes.js"></script>
+<script src="common/LogType.js"></script>
+<script src="background/storeLogs.js"></script>
+<script src="background/dbInfo.js"></script>
+<script src="background/model.js"></script>
+<!-- ALL -->
+
+<!---- Controller ---->
+<!-- Web/BG Only -->
+<script src="background/server.js"></script> 
+<script src="background/controller.js"></script>
+<!-- Sidebar Only -->
+<script src="background/controllerAccess.js"></script>
+<script src="sidebar/messenger.js"></script><!--Proxy-->
+
+
+<!---- Sidebar View ---->
+<script src="sidebar/settings.js"></script>
+<script src="sidebar/metatype.js"></script>
+
+<script src="sidebar/accountmodel.js"></script>
+<script src="sidebar/accountview.js"></script>
+
+<script src="sidebar/optionsmodel.js"></script>
+<script src="sidebar/optionsview.js"></script>
+<script src="sidebar/optioncol.js"></script>
+<script src="sidebar/optionrow.js"></script>
+
+
+<script src="sidebar/omniboxmodel.js"></script>
+<script src="sidebar/omniboxview.js"></script>
+
+<script src="sidebar/statusMsg.js"></script>
+
+<script src="sidebar/noteview.js"></script>
+<script src="sidebar/notemodel.js"></script>
+
+<script src="sidebar/NoteCol.js"></script>
+<script src="sidebar/notelistviews.js"></script>
+
+<script src="sidebar/views.js"></script>
+
+<!---- Utilities ---->
+<script src="util.js"></script>
+
+
+</head>
+<body>
+
+
+<div id="page-main" style="display:;" class="vbox">
+  
+<div id="controls-container">
+<div id="controls-1" class='box'>
+  <div id="controls-left" style="background-color:" class="vbox flex">
+    <div id="cl-1">
+      <!-- INPUT/SEARCH -->
+    </div>
+    <div id="cl-2" style="margin-top:2px;">
+      <!--OPTIONS: Row -->
+    </div>
+  </div><!--end: controls-left -->
+  <div id="controls-right" style="width:24px;">
+    <!-- OPTIONS: Icon Column -->
+  </div>
+</div>
+</div>
+
+<!--div id="entries-scroll"-->
+  <div id="entries-container" ></div>
+<!--/div-->
+
+<!--class="vbox"-->
+
+
+</div><!--end:page-main -->
+
+
+
+<div id="page-options" style="display:none;" class="vbox center_box">
+
+<div id="options-header" class="hbox  center_box">
+<span class="options-title">List.it</span>
+<br /><br /><br />
+<span id="showListLink" class="fakehyperlink"> Take me back to my notes </span>
+</div><!--end:options-header -->
+
+
+
+<div id="options-body" class="">
+  
+  <div id="options-login" class="item"></div>
+
+  <div id="options-features" class="vbox item"></div>
+
+  <div id="options-info" class="vbox item">
+      <span class="itemTitle">Getting started</span>
+      <span>Here are some tips to help you get going with list.it:</span>
+      <ul>
+        <li>Open and close list.it by clicking on the <img src="img/listit-icon.png"> icon in the upper right of your screen.
+	  </li><li>Make new notes by typing into the box at the top of list.it's sidebar.</li>
+	<li>Search your notes by typing into the <img src="img/search.png"> (search bar) in the sidebar.</li>
+	<li>Delete notes by clicking on <img src="img/x.png">.</li>
+	<li>Edit notes by clicking one and typing, when you select
+      something else, the note will automatically save.</li>
+
+    </ul>
+      <div>If you have any questions, feel free to email <a
+      href="mailto:listit@csail.mit.edu">listit@csail.mit.edu</a>.</div>
+      <br />
+      <div> Looking forward to hearing from you, <br /> <br />
+          Wolfe Styke <br />
+	  electronic max <br />
+	  Prof. David Karger
+	  <br /><br />
+	    List-it team at MIT CSAIL
+      </div>
+  </div><!--end:options-info -->
+  
+</div><!--end:options-body -->
+  
+</div><!--end:page-options -->
+
+
+</body>
+</html>
