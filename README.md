@@ -14,3 +14,5 @@ Contributors:
   - Wolfe Styke (Built new Chrome/Firefox addons + Web App)
   - electronic max (Started List-it during PhD at MIT, creator of first Firefox Add-on)
   - Prof. David Karger (Advisor)
+
+<img src="https://raw.github.com/wolfes/List-it/master/listit_ext.png" />
