@@ -413,28 +413,28 @@ controller.addIntroNotes = function() {
   var introTexts = [
     '!! Welcome to List-it!',
     '!! List-it makes it easy to jot things down.',
-    '!! To create a note:\ntype into the box at the top\n '
+    '!! To create a note:\ntype into the box at the top\n ' +
         'and click save or hold shift and press enter.',
-    '!! Add (!!) to the beginning of your note to '
+    '!! Add (!!) to the beginning of your note to ' +
         'PIN the note to the top of your list.',
     'The top note entry box searches your notes instantly as you type.',
-    'Click the icon with a < surrounded by a circle to expand your notes.  '
+    'Click the icon with a < surrounded by a circle to expand your notes.  ' +
         'Click it again to show only the first line of every note.',
-    'Your notes are saved to our backup server every '
+    'Your notes are saved to our backup server every ' +
         '10 minutes while you are logged in.',
-    'Logging in lets you view your notes on the go:\n'
+    'Logging in lets you view your notes on the go:\n' +
         'Just visit http://welist.it/app.',
-    'We also have a firefox add-on, you can get it here:\n'
+    'We also have a firefox add-on, you can get it here:\n' +
         'https://addons.mozilla.org/en-US/firefox/addon/listit/?src=search',
     'To delete a note, click the X on the right side of the note -->',
-    'To open the page a note was created at, '
-        'click the dot/pin icon on the left side of the note. '
+    'To open the page a note was created at, ' +
+        'click the dot/pin icon on the left side of the note. ' +
         '(only for notes made in the Chrome extension/Firefox add-on)',
-    'When you visit a page you\'ve made notes at, '
+    'When you visit a page you\'ve made notes at, ' +
         'these notes will float to the top of your list.',
-    'If you find yourself with lots of long notes,\n\n'
-        'you can click the icon to the right of the save button,\n\n'
-        'the one with a down arrow in a circle\n\n'
+    'If you find yourself with lots of long notes,\n\n' +
+        'you can click the icon to the right of the save button,\n\n' +
+        'the one with a down arrow in a circle\n\n' +
         'to quickly scan only the first line\n\nof each of your notes.'
   ];
   var currTime = Date.now();
