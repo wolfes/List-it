@@ -26,39 +26,12 @@
 
 <!-- Controller -->
 <script src="controller.js"></script>
-<script src="server.js"></script> 
+<script src="server.js"></script>
 
 <!-- Utilities -->
 <script src="../util.js"></script>
 
-
-<script>
-  // Setup Messenger to sidebars and options pages.
-  sidebar.msg.setupSubscribers();
-  sidebar.mgr.setup();
-  options.setupSubscribers();
-
-  chrome.extension.onRequest.addListener(
-    function(request, sender, sendResponse) {
-      switch(request["action"]) {
-      case "activate":
-        debug("activate request heard");
-        sidebar.mgr.toggle(sender.tab);
-        break;
-      case "getOpenHotkeyData":
-        sendResponse({
-          oldHotkey: controller.getOldHotkey(),
-          newHotkey: controller.getNewHotkey()
-        });
-        break;
-      }
-  });
-</script>
-
-
 </head>
 <body>
-
-
 </body>
 </html>

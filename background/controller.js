@@ -147,13 +147,38 @@ controller.setup = function() {
 	  });
 	}
       });
-    
     // Handles tab selection changing state:
     chrome.tabs.onUpdated.addListener(
       function(tabId, changeInfo, tab) {
 	controller.lastFocusTab_ = tab;
       });
   }
+};
+
+/**
+ * Set up BG page for Chrome Extension.
+ */
+controller.setupExtBG = function() {
+  // Setup Messenger to sidebars and options pages.
+  sidebar.msg.setupSubscribers();
+  sidebar.mgr.setup();
+  options.setupSubscribers();
+
+  chrome.extension.onRequest.addListener(
+    function(request, sender, sendResponse) {
+      switch(request["action"]) {
+      case "activate":
+        debug("activate request heard");
+        sidebar.mgr.toggle(sender.tab);
+        break;
+      case "getOpenHotkeyData":
+        sendResponse({
+          oldHotkey: controller.getOldHotkey(),
+          newHotkey: controller.getNewHotkey()
+        });
+        break;
+      }
+  });
 };
 
 $(document).ready(function() {
@@ -168,6 +193,9 @@ $(document).ready(function() {
       localStorage.setItem('openHotkeyNew', openHotkey);
     }
     controller.setOpenHotkey(openHotkey);
+  }
+  if (isChromeExt && isBGPage) {
+    controller.setupExtBG();
   }
 });
 

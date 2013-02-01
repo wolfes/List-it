@@ -51,7 +51,18 @@ L.fixPageResize = _.debounce(function() {
  */
 L.views.setup = function() {
   L.fixPageResize();
-  window.onresize = L.fixPageResize; 
+  window.onresize = L.fixPageResize;
+
+  //TODO(wstyke:01-04-2013) Was moved from index.html
+  //  (running before any scripts)...
+  isChromeExt = function() {
+    if (window.location.hasOwnProperty('origin')) {
+      return window.location.origin.search('chrome-extension://') === 0;
+    } else if (window.location.hasOwnProperty('href')) {
+      return window.location.href.search('chrome-extension://') === 0;
+    }
+    return false;
+  };
 
   // Handles tab selection change within a window:
   if (controller.isChromeExt() && typeof chrome === 'object') {
@@ -67,6 +78,7 @@ L.views.setup = function() {
 	});
       }
     );
+
     // Handles window selection change (causing new tab focus):
     chrome.windows.onFocusChanged.addListener(
       function(windowId) {

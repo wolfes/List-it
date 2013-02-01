@@ -1,14 +1,16 @@
 {
 	"name": "List.it for Chrome",
 	"version": "1.2",
+	"manifest_version": 2,
 	"description": "List.it Chrome Extension",
 	"browser_action": {
 		"default_icon": "img/listit-icon.png",
 		"default_title": "List-it"
 	},
-	"background_page": "background/background.html",
+	"background": {
+		"page": "background/background.html"
+	},
 	"permissions": [
-		"background",
 		"tabs",
 		"contextMenus",
 		"notifications",
@@ -17,6 +19,9 @@
 		"http://*/*", // For content scripts.
 		"tts"
 	],
+	"omnibox": {
+		"keyword":"l"
+	},
 	"content_scripts": [
 	  {
 	    "matches": ["<all_urls>"],
@@ -25,7 +30,7 @@
 	    "all_frames": true
 	  }
 	],
-	"omnibox": {"keyword":"listit"},
 	"options_page": "index.html#options_page",
-	"update_url": "http://welist.it/chrome/updates.xml"
+	"update_url": "http://welist.it/chrome/updates.xml",
+	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

@@ -19,17 +19,6 @@
 
 <link rel="stylesheet" href="sidebar/style.css"/>
 
-<script>
-isChromeExt = function() {
-  if (window.location.hasOwnProperty('origin')) {
-    return window.location.origin.search('chrome-extension://') === 0;
-  } else if (window.location.hasOwnProperty('href')) {
-    return window.location.href.search('chrome-extension://') === 0;
-  }
-  return false;
-};
-</script>
-
 <!-- Web/BG Only -->
 <script src="background/modelevent.js"></script><!-- Proxy? -->
 <script src="background/storeNotes.js"></script>
@@ -42,7 +31,7 @@ isChromeExt = function() {
 
 <!---- Controller ---->
 <!-- Web/BG Only -->
-<script src="background/server.js"></script> 
+<script src="background/server.js"></script>
 <script src="background/controller.js"></script>
 <!-- Sidebar Only -->
 <script src="background/controllerAccess.js"></script>
@@ -123,7 +112,7 @@ isChromeExt = function() {
 
 
 <div id="options-body" class="">
-  
+
   <div id="options-login" class="item"></div>
 
   <div id="options-features" class="vbox item"></div>
@@ -151,9 +140,9 @@ isChromeExt = function() {
 	    List-it team at MIT CSAIL
       </div>
   </div><!--end:options-info -->
-  
+
 </div><!--end:options-body -->
-  
+
 </div><!--end:page-options -->
 
 
