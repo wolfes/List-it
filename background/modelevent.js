@@ -1,5 +1,5 @@
 /**
- * @filedesc Publisher & All the model's event types: model.EventType.X
+ * Publisher & All the model's event types: model.EventType.X
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
@@ -11,7 +11,10 @@ var model = model || {};
  */
 model.publisher = _.extend({}, Backbone.Events);
 
-model.EventType = {  
+/**
+ * Types of events thrown by background models.
+ */
+model.EventType = {
   UNDELETED_NOTES: 'undeleted-notes',
 
   NOTE_ADD: 'note-add',
@@ -37,5 +40,5 @@ model.EventType = {
   REGISTER_SUCCESS: 'register-success',
   REGISTER_FAILURE: 'register-failure',
 
-  NEW_OPEN_HOTKEY: 'new-open-hotkey',
+  NEW_OPEN_HOTKEY: 'new-open-hotkey'
 };

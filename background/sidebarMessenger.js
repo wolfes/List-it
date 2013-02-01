@@ -1,10 +1,12 @@
 /**
- * @filedesc Messager for background's controller and sidebar views.
+ * Messager for background's controller and sidebar views.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var sidebar = sidebar || {};
+
+/** Module Namespace */
 sidebar.msg = sidebar.msg || {};
 
 /**
@@ -14,7 +16,7 @@ sidebar.msg.setupSubscribers = function() {
   // Add Extension Open/Close Listeners
   chrome.browserAction.onClicked.addListener(sidebar.mgr.toggle);
   chrome.windows.onRemoved.addListener(sidebar.mgr.close);
-  
+
   // Add new port listener for sidebars.
   chrome.extension.onConnect.addListener(function(port) {
     sidebar.mgr.connect(port);
@@ -36,7 +38,7 @@ sidebar.msg.responseHandler = function(msg, port) {
   debug('sidebar.msg.responseHandler( ', msg);
   var methodName = msg.methodName;
   var payload = msg.payload;
-  
+
   if (methodName in controller) {
     controller.callControllerMethod(methodName, payload);
     return; // Done!
@@ -49,13 +51,15 @@ sidebar.msg.responseHandler = function(msg, port) {
  */
 sidebar.msg.subscribeToModel = function(action) {
   model.publisher.on(action, function(payload) {
-    sidebar.msg.broadcast({action: action,
-			   payload: payload});
+    sidebar.msg.broadcast({
+        action: action,
+        payload: payload
+    });
   });
 };
 
 /**
- * Broadcast message to all sidebar ports. 
+ * Broadcast message to all sidebar ports.
  * @param {Object} msg The message to broadcast.
  */
 sidebar.msg.broadcast = function(msg) {

@@ -6,6 +6,7 @@
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
+/** Module Namespace */
 var controller = controller || {};
 
 // Part of Changing Default Open-Sidebar Shortcut

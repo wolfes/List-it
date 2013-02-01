@@ -1,27 +1,27 @@
 /**
- * @filedesc Contains activitylog storage subsystem of Model.
+ * Contains activitylog storage subsystem of Model.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var db = db || {};
+
+/** Module Namespace */
 db.lstore = db.lstore || {};
 
 /**
  * Opens Database & Creates activitylogs table.
  */
-db.lstore.setupTable = function() {
-  
-};
+db.lstore.setupTable = function() {};
 
 /**
  * Updates or inserts log in notes database.
  * @param {Object} log ActivityLog to insert.
  */
 db.lstore.insertLog = function(log) {
-  var logs = this.getAllLogs();
+  var logs = db.lstore.getAllLogs();
   logs.push(log);
-  this.saveLogs(logs);
+  db.lstore.saveLogs(logs);
 };
 
 /**
@@ -50,9 +50,9 @@ db.lstore.deleteBefore = function(when) {
     return;
   }
 
-  var allLogs = this.getAllLogs();
+  var allLogs = db.lstore.getAllLogs();
   var newLogs = _.filter(allLogs, function(log) {
     return log.time > when;
   });
-  this.saveLogs(newLogs);
+  db.lstore.saveLogs(newLogs);
 };

@@ -1,10 +1,12 @@
 /**
- * @filedesc Connection between background's controller and opened views.
+ * Connection between background's controller and opened views.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var sidebar = sidebar || {};
+
+/** Module Namespace */
 sidebar.mgr = sidebar.mgr || {};
 
 /**
@@ -58,7 +60,7 @@ sidebar.mgr.setup = function() {
  */
 sidebar.mgr.isSidebar = function(winID) {
   return (sidebar.mgr.child_to_parent_[winID] !== undefined);
-}; 
+};
 
 /**
  * Returns true of window is a sidebar's parent, else false.
@@ -95,9 +97,9 @@ sidebar.mgr.toggle = function(tab) {
 sidebar.mgr.open = function(win) {
   // Allows sidebar to use more space than entirely overlapping parent window
   // TODO: Add as a setting!
-  var allowDocking = true; 
+  var allowDocking = true;
   var width = sidebar.mgr.width_;
-  
+
   var mainWindowFullWidth = screen.width === win.width;
   // Place sidebar as far left as possible
   // while still touching the parent window's left edge
@@ -107,7 +109,7 @@ sidebar.mgr.open = function(win) {
   var newParentWidth = win.width - width;
   if (win.left >= 0 && allowDocking) {
     newSidebarLeft = win.left - Math.min(win.left, width);
-    newParentWidth = win.width - width - newSidebarLeft + win.left
+    newParentWidth = win.width - width - newSidebarLeft + win.left;
   }
 
   chrome.windows.create({
@@ -118,22 +120,22 @@ sidebar.mgr.open = function(win) {
     height: win.height - 22, // For top "Title" bar of popup window.
     type: 'popup'
     },
-    function (new_win) {
+    function(new_win) {
       sidebar.mgr.finishOpen_(new_win, win);
     }
   );
 
   // Record where parent window was located before resizing.
   sidebar.mgr.parent_info_[win.id] = {
-    left: win.left, 
+    left: win.left,
     width: win.width
   };
-  
+
   // Resize parent window as little as possible, without moving the right edge.
   chrome.windows.update(win.id, {
     left: newSidebarLeft + width,
     width: win.width - width - newSidebarLeft + win.left,
-    top: win.top, 
+    top: win.top,
     height: win.height
   });
 };
@@ -144,7 +146,7 @@ sidebar.mgr.open = function(win) {
  * @param {Object} parent The parent window.
  * @private
  */
-sidebar.mgr.finishOpen_ =  function(win, parent) {
+sidebar.mgr.finishOpen_ = function(win, parent) {
   sidebar.mgr.parent_to_child_[parent.id] = win.id;
   sidebar.mgr.child_to_parent_[win.id] = parent.id;
 };
@@ -172,20 +174,21 @@ sidebar.mgr.close = function(winID) {
 
 /**
  * Stores new port connection if it's a sidebar.
+ * @param {Object} port The port to a new window.
  */
-sidebar.mgr.connect =  function(port) {
-  if (port.name !== 'listit') { 
+sidebar.mgr.connect = function(port) {
+  if (port.name !== 'listit') {
     return; // Listening for 'listit' ports only.
   }
   port.onMessage.addListener(function(msg) {
     sidebar.msg.responseHandler(msg, port);
   });
-  
+
   sidebar.mgr.ports[port.portId_] = port;
   port.onDisconnect.addListener(function(e) {
     delete sidebar.mgr.ports[port.portId_];
   });
-  
+
   // Publishes undeleted notes ASAP.
   controller.publishUndeletedNotes();
 };

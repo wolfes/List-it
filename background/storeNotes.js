@@ -1,12 +1,17 @@
 /**
- * @filedesc Contains note storage subsystem of Model.
+ * Contains note storage subsystem of Model.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var db = db || {};
+
+/** Module Namespace */
 db.nstore = db.nstore || {};
 
+/**
+ * Setup note dictionary in localStorage.
+ */
 db.nstore.setup = function() {
   if (db.nstore.getNoteDict() === null) {
     db.nstore.saveNoteDict({});
@@ -43,7 +48,7 @@ db.nstore.getNoteArray = function() {
  */
 db.nstore.saveNoteDict = function(ndict) {
   localStorage.setItem('notedict', JSON.stringify(ndict));
-}
+};
 
 /**
  * Updates or inserts note in notes database.
@@ -89,9 +94,9 @@ db.nstore.getUndeletedNotes = function(continuation) {
     var note = dbNotes[i];
     if (note.jid === -1) {
       magicNote = note;
-    } else if ((note.deleted === true || 
-		note.deleted === 'true' || 
-		note.deleted === 1) || note.jid < 0) {
+    } else if ((note.deleted === true ||
+        note.deleted === 'true' ||
+        note.deleted === 1) || note.jid < 0) {
       // Disqualified: deleted / other magic notes!
     } else {
       notes.push(note);
@@ -113,15 +118,15 @@ db.nstore.getUndeletedNotes = function(continuation) {
   window.dd = notes;
 
   continuation(notes);
-  
+
   /*
   notes = _.filter(notes, function(note) {
-    return ((note.jid >= 0) && 
-	    (note.deleted === false || 
-	     note.deleted === 'false' || 
-	     note.deleted === 0));
+    return ((note.jid >= 0) &&
+    (note.deleted === false ||
+    note.deleted === 'false' ||
+    note.deleted === 0));
   });
-  
+
   notes = _.sortBy(notes, function(note) {
     return Date.now() - note.created;
   });
@@ -136,10 +141,10 @@ db.nstore.getUndeletedNotes = function(continuation) {
 db.nstore.getDeletedNotes = function(continuation) {
   var notes = db.nstore.getNoteArray();
   notes = _.filter(notes, function(note) {
-    return ((note.jid >= 0) && 
-	    (note.deleted === true || 
-	     note.deleted === 'true' || 
-	     note.deleted === 1));
+    return ((note.jid >= 0) &&
+        (note.deleted === true ||
+         note.deleted === 'true' ||
+         note.deleted === 1));
   });
   continuation(notes);
 };
@@ -183,7 +188,7 @@ db.nstore.deleteAllNotes = function() {
   localStorage.removeItem('notedict');
 };
 
-/** 
+/**
  * Passes magic note to continuation, else undefined if no magic note.
  * @return {object} magicNote Either MagicNote or undefined.
  */
@@ -192,11 +197,14 @@ db.nstore.getMagicNote = function() {
   var magicNote;
   if (-1 in ndict) {
     magicNote = ndict[-1];
-  } 
+  }
   return magicNote; // Note || undefined.
 };
 
 // FOR TESTING ONLY
+/**
+ * Remove magic note with user info from localStorage.
+ */
 db.nstore.removeMagicNote = function() {
   var ndict = db.nstore.getNoteDict();
   delete ndict[-1];

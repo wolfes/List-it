@@ -1,9 +1,10 @@
 /**
- * @filedesc Messager for background's controller and sidebar views.
+ * Messager for background's controller and sidebar views.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
+/** Module Namespace */
 var options = options || {};
 
 /**
@@ -13,22 +14,21 @@ options.setupSubscribers = function() {
   chrome.extension.onConnect.addListener(function(port) {
     options.connect(port);
   });
-  
+
   // Subscribe to login-only model events.
 
   options.subscribeToModel(model.EventType.USER_VALIDATED);
   options.subscribeToModel(model.EventType.USER_INVALID);
   options.subscribeToModel(model.EventType.SERVER_UNREACHABLE);
   options.subscribeToModel(model.EventType.USER_LOGIN_STATUS);
-  
 
   options.subscribeToModel(model.EventType.SYNC_SUCCESS);
   options.subscribeToModel(model.EventType.SYNC_FAILURE);
-  options.subscribeToModel(model.EventType.LOGOUT)
+  options.subscribeToModel(model.EventType.LOGOUT);
 
   options.subscribeToModel(model.EventType.REGISTER_SUCCESS);
   options.subscribeToModel(model.EventType.REGISTER_FAILURE);
-  
+
   /*for (var modelEventType in model.EventType) {
     options.subscribeToModel(model.EventType[modelEventType]);
   }*/
@@ -42,6 +42,7 @@ options.ports_ = {};
 
 /**
  * Adds listeners to 'listit-options' named connections.
+ * @param {Object} port The port to a new window.
  */
 options.connect = function(port) {
   if (port.name !== 'listit-options') {
@@ -82,7 +83,7 @@ options.subscribeToModel = function(action) {
 options.responseHandler = function(msg, port) {
   var methodName = msg.methodName;
   var payload = msg.payload;
-  
+
   if (methodName in controller) {
     controller.callControllerMethod(methodName, payload);
     return; // Done!
@@ -92,7 +93,7 @@ options.responseHandler = function(msg, port) {
 /**
  * Broadcasts message to all open options pages.
  * @param {object} msg The message to transmit.
- */ 
+ */
 options.broadcast = function(msg) {
   for (var portIndex in options.ports_) {
     debug('options.broadcast() w/ action:', msg.action);

@@ -1,10 +1,12 @@
 /**
- * @filedesc Contains extra information storage sub-system of Model.
+ * Contains extra information storage sub-system of Model.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var db = db || {};
+
+/** Module Namespace */
 db.info = db.info || {};
 
 /**
@@ -28,7 +30,7 @@ db.info.setUserLoginData = function(email, password) {
 
 /**
  * Returns whether user is logged in.
- * @param {boolean} loggedIn True if user is logged in.
+ * @return {boolean} loggedIn True if user is logged in.
  */
 db.info.isUserLoggedIn = function() {
   var loggedIn = (null !== window.localStorage.getItem('hashpass'));
