@@ -1,7 +1,7 @@
 /**
- * @filedesc Main Controller for updating model from sidebar/option views' requests.
- *  Ideally background's controller has all controllers here, 
- *  such that sidebar's controller and both messengers can be removed for website.
+ * Main Controller for updating model from sidebar/option views' requests.
+ *  Ideally background's controller has all controllers here, such that the
+ *  sidebar's controller and both messengers can be removed for website.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
@@ -9,6 +9,10 @@
 var controller = controller || {};
 
 // Part of Changing Default Open-Sidebar Shortcut
+/**
+ * Set the hotkey for opening List-it sidebar.
+ * @param {string} hotkey The hotkey to use for opening List-it.
+ */
 controller.setOpenHotkey = function(hotkey) {
   if (typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined') {
     var oldHotkey = localStorage.getItem('openHotkeyNew');
@@ -18,7 +22,7 @@ controller.setOpenHotkey = function(hotkey) {
     localStorage.setItem('openHotkeyOld', oldHotkey);
     localStorage.setItem('openHotkeyNew', hotkey);
     try {
-      chrome.tabs.executeScript(null, {file: "background/shortcut.js"});
+      chrome.tabs.executeScript(null, {file: 'background/shortcut.js'});
     } catch (err) {
       debug(err);
     }
@@ -28,9 +32,18 @@ controller.setOpenHotkey = function(hotkey) {
     });
   }
 };
+
+/**
+ * Returns the previous hotkey for opening the List-it Sidebar.
+ * @return {string} The previous hotkey.
+ */
 controller.getOldHotkey = function() {
   return localStorage.getItem('openHotkeyOld');
 };
+/**
+ * Returns the new hotkey for opening the List-it Sidebar.
+ * @return {string} The new hotkey.
+ */
 controller.getNewHotkey = function() {
   return localStorage.getItem('openHotkeyNew');
 };
@@ -54,7 +67,7 @@ controller.getFocusedURL = function() {
 
 
 /**
- * Open url in new tab.  Firefox add-on overwrites this method, so don't clobber.
+ * Open url in new tab.  Firefox add-on overwrites method, so don't clobber.
  * @param {string} url The url to open.
  */
 controller.openTab = controller.openTab || function(url) {
@@ -82,6 +95,7 @@ controller.isChromeExt = function() {
 
 /**
  * Returns true if script in background page of chrome extension.
+ * @param {url} url The url to inspect.
  * @return {boolean} True if chrome ext's background page.
  */
 controller.isBackgroundPage = function(url) {
@@ -98,10 +112,10 @@ controller.isBackgroundPage = function(url) {
  */
 controller.getLocInfo = function() {
   return server.getLocInfo();
-}
-/* {"Country": "UNITED STATES (US)", 
-    "City": Cambridge, MA", 
-    "IP": 18.111.127.80"}*/
+};
+/* {'Country': 'UNITED STATES (US)',
+    'City': Cambridge, MA',
+    'IP': 18.111.127.80'}*/
 
 /**
  * Setup Model and the Views' Messengers.
@@ -126,32 +140,30 @@ controller.setup = function() {
 
   if (controller.isChromeExt() && typeof chrome === 'object') {
     // Handles tab selection change within a window:
-    chrome.tabs.onSelectionChanged.addListener(
-      function(tabId, selectInfo) {
-	chrome.tabs.getSelected(selectInfo.windowId, function(tabInfo) {
-	  if (tabInfo.url.search('chrome-extension://') === -1) {
-	    controller.lastFocusTab_ = tabInfo;
-	  }
-	});
-      }
-    );
+    chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
+        chrome.tabs.getSelected(selectInfo.windowId, function(tabInfo) {
+            if (tabInfo.url.search('chrome-extension://') === -1) {
+                controller.lastFocusTab_ = tabInfo;
+            }
+        });
+    });
 
     // Handles window selection change (causing new tab focus):
     chrome.windows.onFocusChanged.addListener(
-      function(windowId) {
-	if (windowId > 0) {
-	  chrome.tabs.getSelected(windowId, function(tabInfo) {
-	    if (tabInfo.url.search('chrome-extension://') === -1) {
-	      controller.lastFocusTab_ = tabInfo;
-	    }
-	  });
-	}
-      });
+            function(windowId) {
+        if (windowId > 0) {
+            chrome.tabs.getSelected(windowId, function(tabInfo) {
+                if (tabInfo.url.search('chrome-extension://') === -1) {
+                    controller.lastFocusTab_ = tabInfo;
+                }
+            });
+        }
+    });
     // Handles tab selection changing state:
     chrome.tabs.onUpdated.addListener(
-      function(tabId, changeInfo, tab) {
-	controller.lastFocusTab_ = tab;
-      });
+            function(tabId, changeInfo, tab) {
+        controller.lastFocusTab_ = tab;
+    });
   }
 };
 
@@ -166,12 +178,12 @@ controller.setupExtBG = function() {
 
   chrome.extension.onRequest.addListener(
     function(request, sender, sendResponse) {
-      switch(request["action"]) {
-      case "activate":
-        debug("activate request heard");
+    switch (request['action']) {
+      case 'activate':
+        debug('activate request heard');
         sidebar.mgr.toggle(sender.tab);
         break;
-      case "getOpenHotkeyData":
+      case 'getOpenHotkeyData':
         sendResponse({
           oldHotkey: controller.getOldHotkey(),
           newHotkey: controller.getNewHotkey()
@@ -184,12 +196,12 @@ controller.setupExtBG = function() {
 $(document).ready(function() {
   var isChromeExt = controller.isChromeExt();
   var isBGPage = controller.isBackgroundPage(window.location.href);
-  debug("Chrome Ext:", isChromeExt, ", BG Page:", isBGPage);
+  debug('Chrome Ext:', isChromeExt, ', BG Page:', isBGPage);
   if (!isChromeExt || isBGPage) {
     controller.setup();
     var openHotkey = localStorage.getItem('openHotkeyNew');
     if (openHotkey === null) {
-      openHotkey = "Ctrl+Shift+F";
+      openHotkey = 'Ctrl+Shift+F';
       localStorage.setItem('openHotkeyNew', openHotkey);
     }
     controller.setOpenHotkey(openHotkey);
@@ -209,10 +221,11 @@ controller.sync = function() {
 /**
  * Calls controller method with given arguments.
  * @param {string} methodName The name of the method to call.
- * @param {Object} opt_payload The method's parameter.
+ * @param {Object} args List of method's parameters.
  */
 controller.callControllerMethod = function(methodName, args) {
-  if (methodName in controller && typeof(controller[methodName]) === 'function') {
+  if (methodName in controller &&
+        typeof(controller[methodName]) === 'function') {
     controller[methodName].apply(controller, args);
   }
 };
@@ -220,33 +233,34 @@ controller.callControllerMethod = function(methodName, args) {
 
 /**
  * Adds chrome extension's context menu for note creation.
+ * @this
  */
 controller.addContextMenu = function() {
   this.cmenu = chrome.contextMenus.create({
-    type: "normal", 
-    title: "Save to Listit", 
-    contexts: ["selection", "link"],
-    onclick: function(event) { 
+    type: 'normal',
+    title: 'Save to Listit',
+    contexts: ['selection', 'link'],
+    onclick: function(event) {
       console.log(event);
       var currTime = Date.now();
       var note = {
-	//TODO(wstyke): Possible Conflicting JID :(
-	jid: Math.floor(1000000 + Math.random() * 10000000),
-	version: 0,
-	created: currTime,
-	edited: currTime,
-	deleted: 0,
-	contents: event.selectionText + '\n\nFrom: ' + event.pageUrl,
-	meta: JSON.stringify({
-	  'url': event.pageUrl
-	}),
-	modified: 1
-      };
+        //TODO(wstyke): Possible Conflicting JID :(
+        jid: Math.floor(1000000 + Math.random() * 10000000),
+        version: 0,
+        created: currTime,
+        edited: currTime,
+        deleted: 0,
+        contents: event.selectionText + '\n\nFrom: ' + event.pageUrl,
+        meta: JSON.stringify({
+          'url': event.pageUrl
+        }),
+        modified: 1
+    };
 
       controller.addNote({
-	'note': note, 
-	'source': 'contextMenuChrome', 
-	'focusOnAdd': false
+        'note': note,
+        'source': 'contextMenuChrome',
+        'focusOnAdd': false
       });
     }
   });
@@ -269,40 +283,49 @@ controller.addNote = function(event) {
 
 /**
  * Asks model to save note and publish update.
+ * @param {Object} note The note to save.
  */
 controller.saveNote = function(note) {
   model.saveNote(note);
 };
 
-
+/**
+ * Get the ordering of the notes from model.
+ * @return {Object} The note order info.
+ */
 controller.getNoteOrder = function() {
   return model.getNoteOrder();
-}
+};
+
+/**
+ * Save the ordering of the notes to the model.
+ * @param {Object} note The magical note with ordering info.
+ */
 controller.saveNoteOrder = function(note) {
   model.saveNoteOrder(note);
 };
 
-
 /**
  * Asks model to delete note and publish update.
+ * @param {Object} note The note to delete.
  */
 controller.deleteNote = function(note) {
   model.deleteNote(note);
 };
 
-
-// Show Options Page
+/**
+ * Opens options page for both Chrome Ext. and website.
+ */
 controller.showOptionsPage = function() {
   if (controller.isChromeExt()) {
     chrome.tabs.create({
-      url:'index.html#options_page'
+      url: 'index.html#options_page'
     });
   } else { // Show Options
     gid('page-main').style.display = 'none';
     gid('page-options').style.display = '';
   }
 };
-
 
 // User Login Info
 
@@ -312,23 +335,23 @@ controller.showOptionsPage = function() {
  * @param {string} password The user's password.
  */
 controller.validateUserLogin = function(email, password) {
-  server.validateUserLogin(
-    email, password, 
-    function(status, result) {
-      debug(status, result);
-      if (status === 200) { // Valid User info
-	model.setValidUserInfo(
-	  email, password, 
-	  result.study1 || result.study2);
-	// Restart server syncing.
-	server.sync(); 
-      } else if (status === 401) { // Invalid User info.
-	model.publishInvalidUserInfo(email, password);
-      } else { // Unreachable Server.
-	model.publishServerDisconnect();
-      }
-    }
-  );
+    server.validateUserLogin(
+        email, password,
+        function(status, result) {
+            debug(status, result);
+            if (status === 200) { // Valid User info
+                model.setValidUserInfo(
+                    email, password,
+                    result.study1 || result.study2);
+                // Restart server syncing.
+                server.sync();
+            } else if (status === 401) { // Invalid User info.
+                model.publishInvalidUserInfo(email, password);
+            } else { // Unreachable Server.
+                model.publishServerDisconnect();
+            }
+        }
+        );
 };
 
 /**
@@ -337,7 +360,6 @@ controller.validateUserLogin = function(email, password) {
 controller.publishLoginState = function() {
   model.publishLoginState();
 };
-
 
 /**
  * Asks model to log user out of system.
@@ -353,25 +375,25 @@ controller.logoutUser = function() {
  * @param {boolean} opt_couhes True if user consents to study.
  */
 controller.userSignup = function(email, password, opt_couhes) {
-  server.createUser(email, password, opt_couhes, function(success) {
-    debug('server.createUser() success: ', success);
-    if (success) { // Registration Worked.
-      debug('registration success');
-      model.setValidUserInfo(email, password, opt_couhes);
-      server.sync();
-      controller.addIntroNotes();
-      /*
-      model.publisher.trigger(model.EventType.REGISTER_SUCCESS, {
-	email: email,
-	couhes: opt_couhes
-      });*/
-    } else { // Registration Failed.
-      debug('registration failed');
-      model.publisher.trigger(model.EventType.REGISTER_FAILURE, {
-	email: email
-      });
-    }
-  });
+    server.createUser(email, password, opt_couhes, function(success) {
+        debug('server.createUser() success: ', success);
+        if (success) { // Registration Worked.
+            debug('registration success');
+            model.setValidUserInfo(email, password, opt_couhes);
+            server.sync();
+            controller.addIntroNotes();
+            /*
+               model.publisher.trigger(model.EventType.REGISTER_SUCCESS, {
+               email: email,
+               couhes: opt_couhes
+               });*/
+        } else { // Registration Failed.
+            debug('registration failed');
+            model.publisher.trigger(model.EventType.REGISTER_FAILURE, {
+                email: email
+            });
+        }
+    });
 };
 
 /**
@@ -388,24 +410,34 @@ controller.publishSyncSuccess = function() {
 controller.addIntroNotes = function() {
   var introNotes = [];
   var introTexts = [
-    "!! Welcome to List-it!",
-    "!! List-it makes it easy to jot things down.",
-    "!! To create a note:\ntype into the box at the top\n " +
-	  "and click save or hold shift and press enter.",
-    "!! Add (!!) to the beginning of your note to PIN the note to the top of your list.",
-    "The top note entry box searches your notes instantly as you type.",
-    "Click the icon with a < surrounded by a circle to expand your notes.  Click it again to show only the first line of every note.",
-    "Your notes are saved to our backup server every 10 minutes while you are logged in.",
-    "Logging in lets you view your notes on the go:\nJust visit http://welist.it/app.",
-    "We also have a firefox add-on, you can get it here:\n" +
-	  "https://addons.mozilla.org/en-US/firefox/addon/listit/?src=search",
-    "To delete a note, click the X on the right side of the note -->",
-    "To open the page a note was created at, click the dot/pin icon on the left side of the note. (only for notes made in the Chrome extension/Firefox add-on)",
-    "When you visit a page you've made notes at, these notes will float to the top of your list.",
-    "If you find yourself with lots of long notes,\n\nyou can click the icon to the right of the save button,\n\nthe one with a down arrow in a circle\n\nto quickly scan only the first line\n\nof each of your notes."
+    '!! Welcome to List-it!',
+    '!! List-it makes it easy to jot things down.',
+    '!! To create a note:\ntype into the box at the top\n '
+        'and click save or hold shift and press enter.',
+    '!! Add (!!) to the beginning of your note to '
+        'PIN the note to the top of your list.',
+    'The top note entry box searches your notes instantly as you type.',
+    'Click the icon with a < surrounded by a circle to expand your notes.  '
+        'Click it again to show only the first line of every note.',
+    'Your notes are saved to our backup server every '
+        '10 minutes while you are logged in.',
+    'Logging in lets you view your notes on the go:\n'
+        'Just visit http://welist.it/app.',
+    'We also have a firefox add-on, you can get it here:\n'
+        'https://addons.mozilla.org/en-US/firefox/addon/listit/?src=search',
+    'To delete a note, click the X on the right side of the note -->',
+    'To open the page a note was created at, '
+        'click the dot/pin icon on the left side of the note. '
+        '(only for notes made in the Chrome extension/Firefox add-on)',
+    'When you visit a page you\'ve made notes at, '
+        'these notes will float to the top of your list.',
+    'If you find yourself with lots of long notes,\n\n'
+        'you can click the icon to the right of the save button,\n\n'
+        'the one with a down arrow in a circle\n\n'
+        'to quickly scan only the first line\n\nof each of your notes.'
   ];
   var currTime = Date.now();
-  for (var i = introTexts.length-1; i >= 0; i -= 1) {
+  for (var i = introTexts.length - 1; i >= 0; i -= 1) {
     var note = {
       'jid': i,
       'created': currTime,
@@ -430,13 +462,24 @@ controller.addIntroNotes = function() {
 
 
 // Experimental: Text-to-Speech !!!
+/**
+ * Speak some text right now.
+ * @param {string} textToSpeakNow The text to speak.
+ */
 controller.speakNow = function(textToSpeakNow) {
   chrome.tts.speak(textToSpeakNow);
 };
-controller.speakNext = function (textToSpeakNext) {
+/**
+ * Queue text to speak after current queued text is spoken.
+ * @param {string} textToSpeakNext The text to speak next.
+ */
+controller.speakNext = function(textToSpeakNext) {
   chrome.tts.speak(textToSpeakNext, {enqueue: true});
 };
-controller.speakStop = function () {
+/**
+ * Halt Speaking
+ */
+controller.speakStop = function() {
   chrome.tts.stop();
 };
 
@@ -446,7 +489,7 @@ controller.speakStop = function () {
  * Save activity log to model.
  * @param {object} activityLog Log of event to record.
  *   - Has Fields: action TEXT, noteid INT, info OBJ->STR
- *   - Adds Fields: when INT, tabid INT
+ *   - Adds Fields: when INT, tabid INT.
  */
 controller.logEvent = function(activityLog) {
   model.addActivityLog(activityLog);
