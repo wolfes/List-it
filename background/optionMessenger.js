@@ -31,7 +31,7 @@ options.setupSubscribers = function() {
 
   /*for (var modelEventType in model.EventType) {
     options.subscribeToModel(model.EventType[modelEventType]);
-  }*/
+    }*/
 };
 
 /**

@@ -95,101 +95,101 @@ server.performSync = function() {
       //debug('server.js - Sync Success: ' + success);
       //debug('results:', result);
       if (!success) {
-	debug('server.js - Sync failed.');
-	model.publishSyncSuccess(false);
-	return;
+        debug('server.js - Sync failed.');
+        model.publishSyncSuccess(false);
+        return;
       } 
 
-      
+
       // Update magic note w/ order:
       try {
-	db.nstore.getMagicNote(function(oldMagicNote) {
-	  if (result.magicNote) {
-	    var newMagicNote = result.magicNote;
-	    var newContents = JSON.parse(newMagicNote.contents);
-	    var newData = {'noteorder': newContents.noteorder};
-	  }
-	  if (!oldMagicNote && result.magicNote) {
-	    // Save new magic note:
-	    controller.saveNoteOrder({
-	      'jid': -1,
-	      'version': newMagicNote.version,
-	      'created': newMagicNote.created,
-	      'edited': newMagicNote.edited,
-	      'deleted': getDeletedVal(newMagicNote.deleted),
-	      'contents': JSON.stringify(newData),
-	      'meta': '{}',
-	      'modified': 0
-	    });
-	    return;
-	  }
-	  if (newMagicNote.version <= oldMagicNote.version) {
-	    return; // Magic note not updated.
-	  }
+        db.nstore.getMagicNote(function(oldMagicNote) {
+          if (result.magicNote) {
+            var newMagicNote = result.magicNote;
+            var newContents = JSON.parse(newMagicNote.contents);
+            var newData = {'noteorder': newContents.noteorder};
+          }
+          if (!oldMagicNote && result.magicNote) {
+            // Save new magic note:
+            controller.saveNoteOrder({
+              'jid': -1,
+            'version': newMagicNote.version,
+            'created': newMagicNote.created,
+            'edited': newMagicNote.edited,
+            'deleted': getDeletedVal(newMagicNote.deleted),
+            'contents': JSON.stringify(newData),
+            'meta': '{}',
+            'modified': 0
+            });
+            return;
+          }
+          if (newMagicNote.version <= oldMagicNote.version) {
+            return; // Magic note not updated.
+          }
 
-	  // Magic note was updated:
-	  var oldContents = JSON.parse(oldMagicNote.contents);
-	  var oldData = {'noteorder': oldContents.noteorder};
-	  
-	  // Make a dict of all the new jids in ordering:
-	  var newNoteJids = {};
-	  for (var i = 0; i < newData.noteorder.length; i++) {
-	    var jid = newData.noteorder[i];
-	    if (!(jid in newNoteJids)) {
-	      newNoteJids[jid] = true;
-	    }
-	  }
-	  
-	  var modified = 0;
-	  // For each jid in old ordering not in new ordering: add to new!
-	  for (var i = 0; i < oldData.noteorder.length; i++) {
-	    var jid = oldData.noteorder[i];
-	    if (!(jid in newNoteJids)) {
-	      // old jid isn't in newData, modify!
-	      modified = 1;
-	      if (i < oldData.numPinned) {
-		// old note was pinned, add to front of pinned list:
-		newData.noteorder.splice(0, 0, jid);
-		newData.numPinned += 1;
-	      } else if (i > (oldData.noteorder.length - numArchived)) {
-		// old note was archived, add to front of archive list:
-		newData.noteorder.splice(newData.noteorder.length - newData.numArchived, 0, jid);
-		newData.numArchived += 1;
-	      } else {
-		// old note was in middle, add to front of middle section:
-		newData.noteorder.splice(newData.numPinned, 0, jid);
-	      }
-	    }
-	  }
-	  
-	  // Save new note order data!
-	  controller.saveNoteOrder({
-	    'jid': -1,
-	    'version': newMagicNote.version,
-	    'created': newMagicNote.created,
-	    'edited': newMagicNote.edited,
-	    'deleted': getDeletedVal(newMagicNote.deleted),
-	    'contents': JSON.stringify(newData),
-	    'meta': '{}',
-	    'modified': modified
-	  });
+          // Magic note was updated:
+          var oldContents = JSON.parse(oldMagicNote.contents);
+          var oldData = {'noteorder': oldContents.noteorder};
 
-	}); //End processing magic note.
+          // Make a dict of all the new jids in ordering:
+          var newNoteJids = {};
+          for (var i = 0; i < newData.noteorder.length; i++) {
+            var jid = newData.noteorder[i];
+            if (!(jid in newNoteJids)) {
+              newNoteJids[jid] = true;
+            }
+          }
+
+          var modified = 0;
+          // For each jid in old ordering not in new ordering: add to new!
+          for (var i = 0; i < oldData.noteorder.length; i++) {
+            var jid = oldData.noteorder[i];
+            if (!(jid in newNoteJids)) {
+              // old jid isn't in newData, modify!
+              modified = 1;
+              if (i < oldData.numPinned) {
+                // old note was pinned, add to front of pinned list:
+                newData.noteorder.splice(0, 0, jid);
+                newData.numPinned += 1;
+              } else if (i > (oldData.noteorder.length - numArchived)) {
+                // old note was archived, add to front of archive list:
+                newData.noteorder.splice(newData.noteorder.length - newData.numArchived, 0, jid);
+                newData.numArchived += 1;
+              } else {
+                // old note was in middle, add to front of middle section:
+                newData.noteorder.splice(newData.numPinned, 0, jid);
+              }
+            }
+          }
+
+          // Save new note order data!
+          controller.saveNoteOrder({
+            'jid': -1,
+          'version': newMagicNote.version,
+          'created': newMagicNote.created,
+          'edited': newMagicNote.edited,
+          'deleted': getDeletedVal(newMagicNote.deleted),
+          'contents': JSON.stringify(newData),
+          'meta': '{}',
+          'modified': modified
+          });
+
+        }); //End processing magic note.
 
       } catch (err) {
-	debug('Error processing magic note:', err);
+        debug('Error processing magic note:', err);
       }
       debug('continuing sync...');
 
       /**
-	 contents: '{'noteorder':[354486,689087,887008,761910,...,584002,197510]}'
-	 created: 1289069025605
-	 deleted: 1
-	 edited: 1306504582731
-	 id: 74455
-	 jid: -1
-	 version: 137
-      */
+        contents: '{'noteorder':[354486,689087,887008,761910,...,584002,197510]}'
+        created: 1289069025605
+        deleted: 1
+        edited: 1306504582731
+        id: 74455
+        jid: -1
+        version: 137
+        */
 
       // Successful Ajax Response:
       model.publishSyncSuccess(true);
@@ -205,54 +205,54 @@ server.performSync = function() {
       // Process successfully committed & conflict-updated notes:
       var numChanged = changedNotes.length;
       for (var i = 0; i < numChanged; i++) {
-	var serverNote = changedNotes[i];
-	if (serverNote.jid === -1) {
-	  continue;
-	}
-	var clientNote = allNoteDict[serverNote.jid];
-	alteredNotes.push(server.mergeNote_(clientNote, serverNote));
+        var serverNote = changedNotes[i];
+        if (serverNote.jid === -1) {
+          continue;
+        }
+        var clientNote = allNoteDict[serverNote.jid];
+        alteredNotes.push(server.mergeNote_(clientNote, serverNote));
       }
       // Process notes UPDATED outside extension:
       if (result.updateFinal) {
-	var externalUpdates = result.updateFinal;
-	var numNotes = externalUpdates.length;
-	for (var i = 0; i < numNotes; i++) {
-	  var serverNote = externalUpdates[i];
-	  if (serverNote.jid === -1) {
-	    continue;
-	  }
-	  //TODO(wstyke): Remove this TEMP fix to preserve META field:
-	  var clientNote = allNoteDict[serverNote['jid']];
-	  alteredNotes.push(server.mergeNote_(clientNote, serverNote));
-	}
+        var externalUpdates = result.updateFinal;
+        var numNotes = externalUpdates.length;
+        for (var i = 0; i < numNotes; i++) {
+          var serverNote = externalUpdates[i];
+          if (serverNote.jid === -1) {
+            continue;
+          }
+          //TODO(wstyke): Remove this TEMP fix to preserve META field:
+          var clientNote = allNoteDict[serverNote['jid']];
+          alteredNotes.push(server.mergeNote_(clientNote, serverNote));
+        }
       }
-      
+
       // Process notes ADDED outside extension:
       if (result.unknownNotes) {
-	var unknownNotes = result.unknownNotes;
-	var numNotes = unknownNotes.length;
-	for (var i = 0; i < numNotes; i++) {
-	  var serverNote = unknownNotes[i];
-	  if (serverNote.jid === -1) {
-	    continue;
-	  }
-	  newNotes.push(server.mergeNote_({}, serverNote));
-	}
+        var unknownNotes = result.unknownNotes;
+        var numNotes = unknownNotes.length;
+        for (var i = 0; i < numNotes; i++) {
+          var serverNote = unknownNotes[i];
+          if (serverNote.jid === -1) {
+            continue;
+          }
+          newNotes.push(server.mergeNote_({}, serverNote));
+        }
       }
 
       // Update model & publish changes, if any occurred.
       if (newNotes.length !== 0) {
-	debug(newNotes.length, ' new notes!');
-	newNotes.reverse();
-	model.insertBatchNotes(newNotes, true);
+        debug(newNotes.length, ' new notes!');
+        newNotes.reverse();
+        model.insertBatchNotes(newNotes, true);
       }
       if (alteredNotes.length !== 0) {
-	debug(alteredNotes.length, ' altered notes!');
-	model.upsertBatchNotes(alteredNotes, true);
+        debug(alteredNotes.length, ' altered notes!');
+        model.upsertBatchNotes(alteredNotes, true);
       }
 
-    });
   });
+});
 };
 
 /**
@@ -266,7 +266,7 @@ server.mergeNote_ = function(clientNote, serverNote) {
   var note = {modified: 0};
   //WARNING: Any fields not included here are wiped clean!
   var fields = ['jid', 'version', 'created',
-		'edited', 'deleted', 'contents', 'meta'];
+      'edited', 'deleted', 'contents', 'meta'];
   for (var i = 0; i < fields.length; i++) {
     var field = fields[i];
     if (serverNote.hasOwnProperty(field)) {
@@ -292,16 +292,16 @@ server.bundleNoteData_ = function(allNotes) {
     if (note.jid < 0) {
       continue; // Skip magical notes. TODO: remove in future?
     } else if (note.modified === 1) { // Modified List.
-      
+
       //delete note['meta'];
-      
+
       modifiedNotes.push(note);
     } else { // Unmodified Dict.
       unmodifiedNotes[note.jid] = note.version;
     }
   }
   var payload = {modifiedNotes: modifiedNotes,
-		 unmodifiedNotes: unmodifiedNotes};
+    unmodifiedNotes: unmodifiedNotes};
   payload = JSON.stringify(payload);
   return payload;
 };
@@ -319,19 +319,19 @@ server.createUser = function(email, password, couhes, continuation) {
   var firstname = '';
   var lastname = '';
   $.ajax({type: 'POST',
-	  url: ajax.baseURL_ + 'createuser/',
-	  data: ({username: email, password: password, couhes: couhes, 
-		  firstname: firstname, lastname: lastname}),
-	  success: function(data,success) {
-	    // Account Created!
-	    continuation(true);
-	  },
-	  cache: false,
-	  error: function(data,status) {
-	    // Account already exists.
-	    continuation(false);
-	  }
-	 });
+    url: ajax.baseURL_ + 'createuser/',
+    data: ({username: email, password: password, couhes: couhes, 
+      firstname: firstname, lastname: lastname}),
+    success: function(data,success) {
+      // Account Created!
+      continuation(true);
+    },
+    cache: false,
+    error: function(data,status) {
+      // Account already exists.
+      continuation(false);
+    }
+  });
 };
 
 /**
@@ -388,11 +388,11 @@ ajax.baseURL_ = 'http://welist.it/listit/jv3/';
 
 $(document).ready(function() {
   if (typeof window.location.host === 'string' &&
-      window.location.host.search(':8000') !== -1) {
-    // Use given IP in baseURL if sidebar in browser with port 8000.
-    //ajax.baseURL_ = 'http://' + server.getLocInfo().IP + ':8000/listit/jv3/';
-    ajax.baseURL_ = 'http://' + window.location.host + '/listit/jv3/';
-  }
+    window.location.host.search(':8000') !== -1) {
+      // Use given IP in baseURL if sidebar in browser with port 8000.
+      //ajax.baseURL_ = 'http://' + server.getLocInfo().IP + ':8000/listit/jv3/';
+      ajax.baseURL_ = 'http://' + window.location.host + '/listit/jv3/';
+    }
   if (ajax.DEBUG_MODE && controller.isChromeExt()) { 
     ajax.baseURL_ = 'http://' + server.getLocInfo().IP + ':8000/listit/jv3/';
   }
@@ -411,7 +411,7 @@ ajax.getAjax = function(urlMethod, continuation) {
     if (xhr.readyState == 4) {
       var response;
       if (xhr.status === 200) {
-	response = JSON.parse(xhr.responseText);
+        response = JSON.parse(xhr.responseText);
       } 
       continuation(xhr.status, response);
     }
@@ -433,11 +433,11 @@ ajax.postAjax = function(urlMethod, payload, continuation) {
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
       if (xhr.status === 200) {
-	var resp = JSON.parse(xhr.responseText);
-	continuation(true, resp);
+        var resp = JSON.parse(xhr.responseText);
+        continuation(true, resp);
       } else {
-	debug('postAjax failed:', urlMethod);
-	continuation(false, '');
+        debug('postAjax failed:', urlMethod);
+        continuation(false, '');
       }
     }
   };

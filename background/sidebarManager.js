@@ -119,10 +119,10 @@ sidebar.mgr.open = function(win) {
     width: width,
     height: win.height - 22, // For top "Title" bar of popup window.
     type: 'popup'
-    },
-    function(new_win) {
-      sidebar.mgr.finishOpen_(new_win, win);
-    }
+  },
+  function(new_win) {
+    sidebar.mgr.finishOpen_(new_win, win);
+  }
   );
 
   // Record where parent window was located before resizing.
@@ -131,7 +131,8 @@ sidebar.mgr.open = function(win) {
     width: win.width
   };
 
-  // Resize parent window as little as possible, without moving the right edge.
+  // Resize parent window as little as possible,
+  // without moving the right edge.
   chrome.windows.update(win.id, {
     left: newSidebarLeft + width,
     width: win.width - width - newSidebarLeft + win.left,

@@ -1,23 +1,28 @@
 /**
- * @filedesc Model for individual notes.
- * 
+ * Model for individual notes.
+ *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var L = L || {};
+/** Maker Namespace */
 L.make = L.make || {};
+/** Base Namespace */
 L.base = L.base || {};
 
+/**
+ * Note Model Maker.
+ */
 L.make.NoteModel = Backbone.Model.extend({
   defaults: {
     visible: true,
-    /*noteHeight: L.base.oneLineHeight,*/
-    /*baseNoteHeight: '1.3em', //L.base.oneLineHeight, //'1.2em',*/
-    contents: '',
-    meta: {},
-    focused: false,
-    modified: 0,
-    urlMatch: false
+  /*noteHeight: L.base.oneLineHeight,*/
+  /*baseNoteHeight: '1.3em', //L.base.oneLineHeight, //'1.2em',*/
+  contents: '',
+  meta: {},
+  focused: false,
+  modified: 0,
+  urlMatch: false
   },
   initialize: function(data) {
     if (data.meta === 'undefined') {
@@ -26,13 +31,14 @@ L.make.NoteModel = Backbone.Model.extend({
     if (typeof(data.meta) === 'string') {
       data.meta = JSON.parse(data.meta);
     }
-    
+
     var meta = (data.meta === '{}' ? {} : data.meta);
     this.set('meta', (meta && meta !== 'undefined' ? meta : {}));
     this.set('lowerCaseContents', data.contents.toLowerCase());
 
-    this.set('noteHeight', (L.model.options.get('shrinkSelected') ? 
-			    L.base.oneLineHeight : 'auto'));
+    this.set('noteHeight', (
+          L.model.options.get('shrinkSelected') ?
+          L.base.oneLineHeight : 'auto'));
     this.set('baseNoteHeight', this.get('noteHeight'));
 
     vent.on('sys:tabFocused', this.tabFocused, this);
@@ -60,8 +66,8 @@ L.make.NoteModel = Backbone.Model.extend({
       action: db.logs.LogType.NOTE_SAVE,
       noteid: this.get('jid'),
       info: {
-	pinned: (note.contents.length > 0 && note.contents[0] === '!'),
-	contents: note.contents	
+        pinned: (note.contents.length > 0 && note.contents[0] === '!'),
+      contents: note.contents
       }
     });
   },
@@ -87,8 +93,8 @@ L.make.NoteModel = Backbone.Model.extend({
       action: db.logs.LogType.NOTE_DELETE,
       noteid: this.get('jid'),
       info: {
-	pinned: (contents.length > 0 && contents[0] === '!'),
-	contents: contents	
+        pinned: (contents.length > 0 && contents[0] === '!'),
+      contents: contents
       }
     });
 
@@ -96,7 +102,7 @@ L.make.NoteModel = Backbone.Model.extend({
   },
   /**
    * Recieve background/sync request to delete this note.
-   * @param {object} data 
+   * @param {object} data Data about delete request.
    */
   recieveDelete: function(data) {
     this.set('deleted', true);
@@ -115,7 +121,7 @@ L.make.NoteModel = Backbone.Model.extend({
     this.set('modified', updatedNote.modified || this.get('modified'));
     this.set('contents', updatedNote.contents || this.get('contents'));
   },
-  
+
   isPinned: function() {
     var pinned = false;
     var meta = this.get('meta');
@@ -129,9 +135,9 @@ L.make.NoteModel = Backbone.Model.extend({
     var meta = this.get('meta');
     if (typeof meta.url !== 'undefined') {
       if (meta.url === data.url) {
-	this.set('urlMatch', true);
+        this.set('urlMatch', true);
       } else {
-	this.set('urlMatch', false)
+        this.set('urlMatch', false);
       }
     }
   }

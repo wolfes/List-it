@@ -1,22 +1,29 @@
 /**
- * @filedesc View for individual notes.
- * 
+ * View for individual notes.
+ *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var BLOCK = false;
 
 var L = L || {};
+
+/** Make Namespace */
 L.make = L.make || {};
+
+/** Base Namespace */
 L.base = L.base || {};
 
 function htmlEncode(str) {
-  var elm = document.createElement("div");
+  var elm = document.createElement('div');
   var txtNode = document.createTextNode(str);
   elm.appendChild(txtNode);
   return elm.innerHTML;
 }
 
+/**
+ * Create NoteView maker.
+ */
 L.make.NoteView = Backbone.View.extend({
   //tagName: 'div',
   initialize: function() {
@@ -37,19 +44,19 @@ L.make.NoteView = Backbone.View.extend({
     var jid = this.model.get('jid');
     var contents = this.model.get('contents');
     var meta = this.model.get('meta');
-    var leftIcon =  "img/orangedot.png"; //'dotIcon';
+    var leftIcon = 'img/orangedot.png'; //'dotIcon';
 
-    if (meta.hasOwnProperty('pinned') || 
-	(contents.length > 0 && contents[0] === '!')) {
-      leftIcon = 'img/pin.png'; //'pinIcon';
-    }
-    
+    if (meta.hasOwnProperty('pinned') ||
+        (contents.length > 0 && contents[0] === '!')) {
+          leftIcon = 'img/pin.png'; //'pinIcon';
+        }
+
     // Version 3.0: doT.js templating
     var note = L.template.note({
-      jid: jid, 
-      leftIcon: leftIcon,
-      contents: '',  //contents.replace('\n', '<br>')
-      height:  this.model.get('baseNoteHeight') //L.base.oneLineHeight
+      jid: jid,
+        leftIcon: leftIcon,
+        contents: '',  //contents.replace('\n', '<br>')
+        height: this.model.get('baseNoteHeight') //L.base.oneLineHeight
     });
 
     note = $(note);
@@ -58,7 +65,7 @@ L.make.NoteView = Backbone.View.extend({
       txtElt.innerText = contents;
     } else {
       while (contents.search('\n') !== -1) {
-	contents = contents.replace('\n', '<br>');
+        contents = contents.replace('\n', '<br>');
       }
       txtElt.innerHTML = contents;
     }
@@ -67,26 +74,26 @@ L.make.NoteView = Backbone.View.extend({
     return this.$el;
   },
   events: {
-    "focusin .noteContents": "focus",
-    "focusout .noteContents": "blur",
-    'click .linkIcon': "openLink",
+    'focusin .noteContents': 'focus',
+    'focusout .noteContents': 'blur',
+    'click .linkIcon': 'openLink',
     'click .left img': 'leftIconClicked',
     'click .xIcon': 'removeNote',
     'keyup .noteContents': 'handleKeyUp_',
     'keypress .noteContents': 'handleKeyPress_',
 
     'mouseenter': 'showIcons_',
-    'mouseleave': 'hideIcons_',
+    'mouseleave': 'hideIcons_'
   },
   getNoteText: function() {
-    var contents = this.$('.noteContents').html(); 
+    var contents = this.$('.noteContents').html();
     //this.el.childNodes[1].childNodes[0].innerHTML;
     /*if (BLOCK && this.el.hasOwnProperty('innerText')) {
       return this.el.childNodes[1].childNodes[0].innerText;
-    } else {*/
+      } else {*/
     while (contents.search('<br>') !== -1) {
-      contents = contents.replace('<br>', '\n')
-    } 
+      contents = contents.replace('<br>', '\n');
+    }
     return contents;
     //}
   },
@@ -95,10 +102,10 @@ L.make.NoteView = Backbone.View.extend({
       this.el.innerText = contents;
     } else {
       while (contents.search('\n') !== -1) {
-	contents = contents.replace('\n', '<br>');
+        contents = contents.replace('\n', '<br>');
       }
       this.el.childNodes[1].childNodes[0].innerHTML = contents;
-    }    
+    }
   },
   fixHeight: function() {
     this.$('.noteContents').css('height', this.model.get('noteHeight'));
@@ -132,13 +139,13 @@ L.make.NoteView = Backbone.View.extend({
     if (this.el.hasOwnProperty('scrollIntoViewIfNeeded')) {
       this.el.scrollIntoViewIfNeeded(); // Not in FF.
     }
-    var contents = this.model.get('contents'); 
+    var contents = this.model.get('contents');
     var this_ = this;
     L.saveActivityLog({
       action: db.logs.LogType.NOTE_EDIT,
       noteid: this_.model.get('jid'),
       info: {
-	pinned: (contents.length > 0 && contents[0] === '!')
+        pinned: (contents.length > 0 && contents[0] === '!')
       }
     });
   },
@@ -147,19 +154,21 @@ L.make.NoteView = Backbone.View.extend({
     this.hideIcons_();
     this.$el.removeClass('focus');
     /*setTimeout(function() {
-      this_.el.childNodes[1].childNodes[0].style.height = this_.model.get('noteHeight');
-    }, 1 * 60 * 1000); */ // 1 minute
+      this_.el.childNodes[1].childNodes[0].style.height = (
+      this_.model.get('noteHeight');
+      );
+      }, 1 * 60 * 1000); */ // 1 minute
 
-    var newContents = this.getNoteText(); //$('.noteContents')[0].innerText;    
+    var newContents = this.getNoteText(); //$('.noteContents')[0].innerText;
 
     if (newContents !== this.model.get('contents')) {
-      // Note content was edited!      
+      // Note content was edited!
       var meta = this.getBasicMeta_();
       this.model.set({
-	'edited': Date.now(),
-	'contents': newContents,
-	'meta': meta,
-	'modified': 1
+        'edited': Date.now(),
+        'contents': newContents,
+        'meta': meta,
+        'modified': 1
       });
       this.model.saveNote();
     }
@@ -197,7 +206,7 @@ L.make.NoteView = Backbone.View.extend({
   getBasicMeta_: function() {
     var meta = this.model.get('meta');
     var newContents = this.getNoteText(); //$('.noteContents')[0].innerText;
-    
+
     if (newContents.length > 0 && newContents[0] === '!') {
       meta['pinned'] = true;
       this.setIcon_('pin');
@@ -209,7 +218,7 @@ L.make.NoteView = Backbone.View.extend({
   },
   openLink: function() {
     debug('READY');
-    L.openLinkTimer = setTimeout(function () {
+    L.openLinkTimer = setTimeout(function() {
       debug('FIRE');
       window.open(this.model.get('meta').fullURL);
     }, 50);
@@ -221,8 +230,8 @@ L.make.NoteView = Backbone.View.extend({
   removeNote: function() {
     this.model.set({
       'edited': Date.now(),
-      'deleted': 1,
-      'modified': 1
+    'deleted': 1,
+    'modified': 1
     });
     this.model.deleteSelf();
     var this_ = this;
@@ -236,7 +245,7 @@ L.make.NoteView = Backbone.View.extend({
       this_.$el.remove();
     });
     /*this.$el.slideUp(400, function() {
-        this_.$el.remove();
+      this_.$el.remove();
       });*/
   },
   /**
@@ -258,52 +267,54 @@ L.make.NoteView = Backbone.View.extend({
     } else {
       // Put note back in it's place.
       // Let notelistview take care of this?
-      	//$('#entries').append(this.render());
+      //$('#entries').append(this.render());
     }
   },
   /**
    * Left icon clicked: Open URL note was created at.
    */
   leftIconClicked: function() {
-    
-    
-   /* Bookmark Feature de-activated
-      Use something other than drag icon 'pin/dot icon'.
-    
-    var meta = this.model.get('meta');
-    if (typeof meta[MetaType.URL] == 'string') { 
-      // Open New Tab with Bookmarked URL
-      var url = meta[MetaType.URL];
-      
-      vent.trigger('usr:openTab', {url: url}); // For Chrome Ext.
-      controller.openTab(url); // For Firefox to listen to.
 
-      var jid = this.model.get('jid');
-      var contents = this.model.get('contents');
-      var pinned = (contents.length > 0 && contents[0] === '!');
-      L.saveActivityLog({
-	action: db.logs.LogType.BOOKMARK_OPEN,
-	noteid: jid,
-	url: url,
-	info: {
-	  pinned: pinned
-	}
-      });
+
+    /* Bookmark Feature de-activated
+       Use something other than drag icon 'pin/dot icon'.
+
+       var meta = this.model.get('meta');
+       if (typeof meta[MetaType.URL] == 'string') {
+    // Open New Tab with Bookmarked URL
+    var url = meta[MetaType.URL];
+
+    vent.trigger('usr:openTab', {url: url}); // For Chrome Ext.
+    controller.openTab(url); // For Firefox to listen to.
+
+    var jid = this.model.get('jid');
+    var contents = this.model.get('contents');
+    var pinned = (contents.length > 0 && contents[0] === '!');
+    L.saveActivityLog({
+    action: db.logs.LogType.BOOKMARK_OPEN,
+    noteid: jid,
+    url: url,
+    info: {
+    pinned: pinned
     }
-   */
+    });
+    }
+    */
   },
   /**
    * Show Dot/Pin and Delete Icon when note is moused over.
    */
   showIcons_: function(event) {
     this.$('.xIcon').css('display', '');
-    //$('.note').live('hover', function(event) {window.e = event;  $('img', e.currentTarget).css('display', '')})
+    //$('.note').live('hover', function(event) {
+    //  window.e = event;  $('img', e.currentTarget).css('display', '')
+    ///})
   },
   hideIcons_: function(event) {
     if (!this.model.get('focused')) {
       var this_ = this;
       setTimeout(function() {
-	this_.$('.xIcon').css('display', 'none');
+        this_.$('.xIcon').css('display', 'none');
       }, 60);
     }
   }

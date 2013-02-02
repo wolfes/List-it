@@ -1,14 +1,19 @@
 /**
- * @filedesc View: omnibox input. Provides search and note-creation.
+ * View: omnibox input. Provides search and note-creation.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 
 var L = L || {};
+/** Maker namespace */
 L.make = L.make || {};
+/** Collection namespace */
 L.set = L.set || {};
 
+/**
+ * Omnibox View maker.
+ */
 L.make.OmniboxView = Backbone.View.extend({
   initialize: function() {
     var this_ = this;
@@ -52,7 +57,7 @@ L.make.OmniboxView = Backbone.View.extend({
   /**
    * Handles KEYPRESS event:
    *   Shift+Enter => create note.
-   * @param {object}
+   * @param {object} event The Key Press Event.
    */
   keyPressHandler_: function(event) {
     var isEnter = event.keyCode === 13;
@@ -61,13 +66,14 @@ L.make.OmniboxView = Backbone.View.extend({
       var text = this.getNoteText();
       var note = this.buildNewNote_(text, meta);
       this.saveAndFocus_(note);
-      event.preventDefault(); // Prevent enter from entering new note area.
+      // Prevent enter from entering new note area.
+      event.preventDefault();
     }
   },
   /**
-   * Handles KEYUP event: "After char enters entry."
+   * Handles KEYUP event: 'After char enters entry.'
    *   Text change: Search.
-   * @param {object}
+   * @param {object} event The Key Up Event.
    */
   keyUpHandler_: function(event) {
     var isESC = event.keyCode === 27;
@@ -84,7 +90,7 @@ L.make.OmniboxView = Backbone.View.extend({
     if (this.model.get('searchEnabled')) {
       var searchTerms = this.getSearchTerms();
       if (searchTerms !== this.model.get('searchTerms')) {
-	this.model.set('searchTerms', searchTerms);
+        this.model.set('searchTerms', searchTerms);
       }
     }
   },
@@ -115,13 +121,13 @@ L.make.OmniboxView = Backbone.View.extend({
       // First focus is from autofocus.
       this.model.set('untouched', false);
       L.saveActivityLog({
-	action: db.logs.LogType.CREATE_AUTOFOCUS,
-	info: {}
+        action: db.logs.LogType.CREATE_AUTOFOCUS,
+        info: {}
       });
     } else {
       L.saveActivityLog({
-	action: db.logs.LogType.CREATE_FOCUS,
-	info: {}
+        action: db.logs.LogType.CREATE_FOCUS,
+        info: {}
       });
     }
   },
@@ -155,7 +161,7 @@ L.make.OmniboxView = Backbone.View.extend({
 
   /**
    * Handles new-note save button click event.
-   * @param {object} click event
+   * @param {object} event The click event.
    * @private
    */
   saveClicked_: function(event) {
@@ -180,7 +186,7 @@ L.make.OmniboxView = Backbone.View.extend({
       meta['hostURL'] = getHostname(tabURL);
       meta['fullURL'] = tabURL;
     }
-    
+
     var note = this.buildNewNote_(text, meta);
     this.saveAndFocus_(note);
   },
@@ -200,15 +206,15 @@ L.make.OmniboxView = Backbone.View.extend({
 
   /**
    * Returns true if input element is empty.
-   * @return {boolean}
+   * @return {boolean} If note text is empty.
    */
   isEmpty: function() {
     var inputHTML = this.getNoteText().trim();
-    return inputHTML === "" || inputHTML === "<br>";
+    return inputHTML === '' || inputHTML === '<br>';
   },
   /**
-   * Returns true of new note box is 2+ lines long.
-   * @return {boolean}
+   * Returns true of new note box is 1 lines long.
+   * @return {boolean} true if note is one line long.
    */
   isOneLine: function() {
     var inputHTML = this.getNoteText().trim();
@@ -220,20 +226,21 @@ L.make.OmniboxView = Backbone.View.extend({
    */
   getNoteText: function() {
     var el = this.$('#new-note-entry')[0];
-    var text = el.innerHTML; //this.el.childNodes[1].childNodes[0].innerHTML;
+    //this.el.childNodes[1].childNodes[0].innerHTML;
+    var text = el.innerHTML;
     if (false && el.hasOwnProperty('innerText')) {
       // DEPRECATED innerText ...
       text = el.innerText;
     } else {
       while (text.search('<br>') !== -1) {
-	text = text.replace('<br>', '\n')
+        text = text.replace('<br>', '\n');
       }
     }
     return text;
   },
   /**
    * Returns input element.
-   * @return Content-editable div Input DOM Element
+   * @return {Object} Content-editable div Input DOM Element.
    */
   getInput: function() {
     return this.$('#new-note-entry')[0];
@@ -305,25 +312,25 @@ L.make.OmniboxView = Backbone.View.extend({
    * @param {object} note The note to save.
    * @param {boolean} focusOnAdd Whether to focus note on render.
    */
-  saveNewNote_: function(note, focusOnAdd) {    
+  saveNewNote_: function(note, focusOnAdd) {
     // Save Note
     controller.addNote({
-      'note': note, 
-      'source': 'newnote', 
-      'focusOnAdd': focusOnAdd || false
+      'note': note,
+    'source': 'newnote',
+    'focusOnAdd': focusOnAdd || false
     });
-    
+
     // Log Note Save
     L.saveActivityLog({
       action: db.logs.LogType.CREATE_SAVE,
       noteid: note.jid,
       info: {
-	contents: note.contents,
-	pinned: ((note.contents.length > 0) && (note.contents[0] === '!')),
+        contents: note.contents,
+      pinned: ((note.contents.length > 0) && (note.contents[0] === '!'))
       }
     });
   },
-  
+
   /**
    * Focuses row=1, col=1 of new note entry box.
    */
@@ -341,7 +348,7 @@ L.make.OmniboxView = Backbone.View.extend({
       debug('FAIL: focusInputWithCaret()');
     }
   },
-  
+
   /**
    * Returns the current search terms
    * @return {string} The search text.

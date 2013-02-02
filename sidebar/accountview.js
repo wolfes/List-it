@@ -1,14 +1,19 @@
 /**
- * @filedesc View for Account Login/Registration.
+ * View for Account Login/Registration.
  * Hastily moved in from Google Closure, could benefit from re-structuring.
- * 
+ *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var L = L || {};
+/** Maker Namespace */
 L.make = L.make || {};
+/** Mode Namespace */
 L.mode = L.mode || {};
 
+/**
+ * View for User Account Information.
+ */
 L.make.AccountView = Backbone.View.extend({
   tagName: 'div',
   initialize: function() {
@@ -19,31 +24,31 @@ L.make.AccountView = Backbone.View.extend({
       this.updateLoginSuccess_(msg.email);
     }, this);
     model.publisher.on(model.EventType.USER_INVALID, function(msg) {
-      var status = "Oops, are you sure that's your password?";
+      var status = 'Oops, are you sure that\'s your password?';
       this.updateLoginFailure_(msg.email, status);
     }, this);
-    
+
     // Handle Server Reachability
     model.publisher.on(model.EventType.SERVER_UNREACHABLE, function(msg) {
       var status = '';
       if (navigator.onLine) {
-	status = ("Oops, it looks like the server is down,<br/>" + 
-		  "please try again in a little bit.");
+        status = ('Oops, it looks like the server is down,<br/>' +
+          'please try again in a little bit.');
       } else {
-	status = "Oops, it looks like you're offline.";
+        status = 'Oops, it looks like you\'re offline.';
       }
       this.updateLoginFailure_(msg.email, status);
     }, this);
 
     model.publisher.on(model.EventType.USER_LOGIN_STATUS, function(msg) {
       if (msg.loggedIn) {
-	this.updateLoginSuccess_(msg.email);
+        this.updateLoginSuccess_(msg.email);
       } else {
-	var status = ''
-	this.updateLoginFailure_('', status);
+        var status = '';
+        this.updateLoginFailure_('', status);
       }
     }, this);
-    
+
     // Handle User Logout Event
     model.publisher.on(model.EventType.LOGOUT, function(msg) {
       this.updateLogout_();
@@ -61,31 +66,31 @@ L.make.AccountView = Backbone.View.extend({
   },
   render: function() {
     var portalBox = document.createElement('div');
-    
+
     var portalTitle = document.createElement('span');
-    portalTitle.className = 'itemTitle'
-    portalTitle.innerHTML = "Account Backup Service";
+    portalTitle.className = 'itemTitle';
+    portalTitle.innerHTML = 'Account Backup Service';
     portalBox.appendChild(portalTitle);
-    
+
     var description = document.createElement('p');
-    description.innerHTML = "" +
-	  "<a href='http://listit.csail.mit.edu/'>List.it</a> " +
-	  "is a <a href='http://code.google.com/p/list-it'>free " +
-	  "and open-source</a> note-taking tool from " +
-	  "<a href='http://www.csail.mit.edu/'>MIT CSAIL</a> that " +
-	  "lets you safely, quickly, and easily write stuff down.";
+    description.innerHTML = '' +
+      '<a href=\'http://listit.csail.mit.edu/\'>List.it</a> ' +
+      'is a <a href=\'http://code.google.com/p/list-it\'>free ' +
+      'and open-source</a> note-taking tool from ' +
+      '<a href=\'http://www.csail.mit.edu/\'>MIT CSAIL</a> that ' +
+      'lets you safely, quickly, and easily write stuff down.';
     portalBox.appendChild(description);
 
     portalBox.innerHTML += '<ul>' +
-	  '<li>Access your notes online at '+
-	  '<a href="https://welist.it/zen/index.html">List-it Zen</a>.</li>'+
-	  '<li>Free backup: your notes are safe.</li>'+
-	  '</ul>';
-    
+      '<li>Access your notes online at ' +
+      '<a href=\'https://welist.it/zen/index.html\'>List-it Zen</a>.</li>' +
+      '<li>Free backup: your notes are safe.</li>' +
+      '</ul>';
+
     var form = document.createElement('form');
     form.id = 'loginRegisterForm';
     form.className = 'loginForm';
-    
+
     // User Email Label + Input.
     var emailLabel = document.createElement('div');
     emailLabel.className = 'inputLabel';
@@ -140,9 +145,9 @@ L.make.AccountView = Backbone.View.extend({
 
     // Login + Registration Status Outputs:
     var formStatus = document.createElement('div');
-    formStatus.id = 'formStatus'
+    formStatus.id = 'formStatus';
     formStatus.className = 'formStatus';
-    formStatus.style.display = "none";
+    formStatus.style.display = 'none';
     form.appendChild(formStatus);
 
     /**
@@ -169,7 +174,7 @@ L.make.AccountView = Backbone.View.extend({
     registerButton.className = 'button';
     registerButton.value = 'New Account';
     form.appendChild(registerButton);
-    
+
     portalBox.appendChild(form);
 
     var registerInfoB = document.createElement('div');
@@ -178,18 +183,18 @@ L.make.AccountView = Backbone.View.extend({
 
 
     // Study Description
-    registerInfoB.innerHTML += "<p class='study_details'>" +
-	  "<b>Contribute to science!</b><br/> " +
-	  "We are conducting research on note taking. <br /><br /> " +
-	  "If you give us (researchers at MIT) permission to study your notes, " +
-	  "you will be helping us better understand how people write " +
-	  "information and enable us to build better tools.</p>";
-    
-    registerInfoB.innerHTML += "<p class='study_details'>If you " +
-	  "participate, your notes will be kept confidential to " +
-	  "<i>the list.it group</i> and will not be divulged to " +
-	  "anyone outside without your explicit (further) permission.</p>";
-    
+    registerInfoB.innerHTML += '<p class='study_details'>' +
+      '<b>Contribute to science!</b><br/> ' +
+      'We are conducting research on note taking. <br /><br /> ' +
+      'If you give us (researchers at MIT) permission to study your notes, ' +
+      'you will be helping us better understand how people write ' +
+      'information and enable us to build better tools.</p>';
+
+    registerInfoB.innerHTML += '<p class=\'study_details\'>If you ' +
+      'participate, your notes will be kept confidential to ' +
+      '<i>the list.it group</i> and will not be divulged to ' +
+      'anyone outside without your explicit (further) permission.</p>';
+
 
     // Study Participation Checkbox.
     var studyInput = document.createElement('input');
@@ -202,7 +207,7 @@ L.make.AccountView = Backbone.View.extend({
 
     var studyLabel = document.createElement('span');
     studyLabel.className = 'studyOption';
-    studyLabel.innerHTML = "Participate in research study?";
+    studyLabel.innerHTML = 'Participate in research study?';
     registerInfoB.appendChild(studyLabel);
 
     form.appendChild(registerInfoB);
@@ -213,31 +218,28 @@ L.make.AccountView = Backbone.View.extend({
   events: {
     'keyup #pw1': 'verifyPasswords',
     'keyup #pw2': 'verifyPasswords',
-    
+
     'submit #loginRegisterForm': 'tryRegister_',
 
     'click #loginButton': 'tryLogin_',
     'click #logoutButton': 'logoutClicked',
-    
-    'click #registerButton': 'showRegister',
+
+    'click #registerButton': 'showRegister'
   },
   showListit: function() {
     L.views.showListit();
   },
-
-
   /**
    * Show form elements for login mode.
    */
   showLogin: function() {
-    this.model.set('mode', L.mode.account.LOGIN)
+    this.model.set('mode', L.mode.account.LOGIN);
     this.showModeElements_(this.model.get('mode'));
     $('#pw2')[0].required = false;
     this.verifyPasswords();
-    $('#registerButton')[0].value = "New Account";
-    $('#registerButton')[0].type = "button";
+    $('#registerButton')[0].value = 'New Account';
+    $('#registerButton')[0].type = 'button';
   },
-
   /**
    * Show form elements for register mode.
    */
@@ -245,11 +247,11 @@ L.make.AccountView = Backbone.View.extend({
     this.model.set('mode', L.mode.account.REGISTER);
     this.showModeElements_(this.model.get('mode'));
     $('#pw2')[0].required = true;
-    $('#registerButton')[0].value = "Create Account!";
-    $('#registerButton')[0].type = "submit";
+    $('#registerButton')[0].value = 'Create Account!';
+    $('#registerButton')[0].type = 'submit';
   },
   /**
-   * Hide all elements that are only for other modes and show this mode's elements.
+   * Hide all elts that are only for other modes and show this mode's elements.
    * @param {AccountPortal.ModeType.X} accountMode The mode to show.
    */
   showModeElements_: function(accountMode) {
@@ -257,18 +259,18 @@ L.make.AccountView = Backbone.View.extend({
     var registerElts = $('.registerOnly');
 
     var loginDisplay = accountMode === L.mode.account.LOGIN ? '' : 'none';
-    var showReg =  accountMode === L.mode.account.REGISTER;
+    var showReg = accountMode === L.mode.account.REGISTER;
     var registerDisplay = showReg ? '' : 'none';
-    
+
     // There aren't any loginOnly elts currently...
     for (var i = 0; i < loginElts.length; i++) {
       loginElts[i].style.display = loginDisplay;
     }
     for (var i = 0; i < registerElts.length; i++) {
       if (showReg) {
-	$(registerElts[i]).slideDown();
+        $(registerElts[i]).slideDown();
       } else {
-	$(registerElts[i]).slideUp();
+        $(registerElts[i]).slideUp();
       }
     }
   },
@@ -286,12 +288,11 @@ L.make.AccountView = Backbone.View.extend({
     // Look for something wrong with passwords:
     if (pw1.value.length < 4) {
       pw1.setCustomValidity(
-	'Please choose a password with more than 3 characters.');
+        'Please choose a password with more than 3 characters.');
     } else if (pw1.value !== pw2.value) {
       pw2.setCustomValidity('Passwords do not match.');
     }
   },
-
   /**
    * Attempt to log the user in.
    * @param {object} event The submit event.
@@ -304,7 +305,6 @@ L.make.AccountView = Backbone.View.extend({
     var password = $('#pw1')[0].value;
     controller.validateUserLogin(email, password);
   },
-
   /**
    * Attempt to register the user.
    * @param {object} event The submit event.
@@ -317,8 +317,6 @@ L.make.AccountView = Backbone.View.extend({
     var couhes = $('#participate')[0].checked;
     controller.userSignup(email, password, couhes);
   },
-
-
   /**
    * Update login view with success.
    * @param {string} email The user's email.
@@ -330,14 +328,13 @@ L.make.AccountView = Backbone.View.extend({
     $('#pw2')[0].value = '';
 
     this.showValidStatus_(
-      "You're logged in & syncing every 5 minutes!"
-    );
+        'You\'re logged in & syncing every 5 minutes!'
+        );
 
     $('#loginButton')[0].style.display = 'none';
     $('#logoutButton')[0].style.display = '';
     this.showLogin();
   },
-
   /**
    * Update login view with failure.
    * @param {string} email The user's email.
@@ -354,13 +351,12 @@ L.make.AccountView = Backbone.View.extend({
     $('#pw1')[0].focus();
 
     var msg = opt_msg || ('Uh oh, we were unable to sync: <br />' +
-		          'Check your password or internet connection?');
+        'Check your password or internet connection?');
     this.showInvalidStatus_(msg);
 
     $('#loginButton')[0].style.display = '';
     $('#logoutButton')[0].style.display = 'none';
   },
-
   /**
    * Update register view with failure.
    * @param {string} email The user's email.
@@ -370,16 +366,13 @@ L.make.AccountView = Backbone.View.extend({
     $('#email')[0].value = email;
     //$('#pw1')[0].value = '';
     $('#pw2')[0].value = '';
-    
+
     this.showInvalidStatus_(
-      'This email is already registered, try logging in?'
-    );
+        'This email is already registered, try logging in?'
+        );
     $('#loginButton')[0].style.display = '';
     $('#logoutButton')[0].style.display = 'none';
   },
-
-
-
   /**
    * Update view due to logout event.
    * @private
@@ -392,16 +385,14 @@ L.make.AccountView = Backbone.View.extend({
     //controller.logoutUser();
 
     this.showValidStatus_(
-      "You're logged out!"
-    );
+        'You\'re logged out!'
+        );
     $('#loginButton')[0].style.display = '';
     $('#logoutButton')[0].style.display = 'none';
 
     //TODO(wstyke): showLogin?
     this.showLogin();
   },
-
-
   /**
    * Show valid form status text.
    * @param {string} status The status text to show.
@@ -413,9 +404,8 @@ L.make.AccountView = Backbone.View.extend({
 
     $(formStatus).addClass('valid');
     $(formStatus).removeClass('invalid');
-    $('#formStatus').slideDown()
+    $('#formStatus').slideDown();
   },
-
   /**
    * Show invalid form status text.
    * @param {string} status The status text to show.
@@ -426,9 +416,8 @@ L.make.AccountView = Backbone.View.extend({
     formStatus.innerHTML = status;
     $(formStatus).addClass('invalid');
     $(formStatus).removeClass('valid');
-    $('#formStatus').slideDown()
+    $('#formStatus').slideDown();
   },
-
   /**
    * Called when logout button is clicked.
    * @param {object} clickEvent The button click event.
@@ -437,8 +426,5 @@ L.make.AccountView = Backbone.View.extend({
     $('#loginButton')[0].style.display = '';
     $('#logoutButton')[0].style.display = 'none';
     controller.logoutUser();
-  },
-
-
-
+  }
 });

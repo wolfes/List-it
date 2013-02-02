@@ -1,5 +1,5 @@
 /**
- * @filedesc Describes types of keys for Note Meta data.
+ * Describes types of keys for Note Meta data.
  *
  * @author wstyke@gmail.com - Wolfe Styke
  */

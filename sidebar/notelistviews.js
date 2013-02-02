@@ -1,11 +1,13 @@
 /**
- * @filedesc Views on Note Collection for pinned/regular notes.
- * 
+ * Views on Note Collection for pinned/regular notes.
+ *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var L = L || {};
+/** Maker Namespace */
 L.make = L.make || {};
+/** Base Namespace */
 L.base = L.base || {};
 
 /**
@@ -14,7 +16,7 @@ L.base = L.base || {};
 L.make.NotesView = Backbone.View.extend({
   defaults: {
     noteHeight: '1.3em', //L.base.oneLineHeight, //'1.2em',
-    lastFocusedNote: null
+  lastFocusedNote: null
   },
   initialize: function() {
     this.collection.on('add', this.addNoteToView, this);
@@ -23,14 +25,13 @@ L.make.NotesView = Backbone.View.extend({
   render: function(eltId) {
     var notelist = document.createElement('div');
     notelist.id = eltId;
-    
     notelist.className = 'notelist';
     this.setElement(notelist);
     return this.$el;
   },
   getNotes: function() {
     return this.collection.models;
-  },
+  }
 });
 
 
@@ -45,24 +46,24 @@ L.make.NotesPinView = L.make.NotesView.extend({
     return _.filter(
       this.collection.models,
       function(note) {
-	var contents = note.get('contents');
-	return contents.length > 0 && contents[0] === '!';
+        var contents = note.get('contents');
+        return contents.length > 0 && contents[0] === '!';
       });
   },
   addNoteToView: function(note) {
     var contents = note.get('contents');
     if (contents.length !== 0 && contents[0] === '!') {
       var noteView = new L.make.NoteView({
-	model: note
+        model: note
       });
       if (note.get('prepend')) {
-	$('#entries-pin').prepend(noteView.render());
+        $('#entries-pin').prepend(noteView.render());
       } else {
-	$('#entries-pin').append(noteView.render());
+        $('#entries-pin').append(noteView.render());
       }
       L.fixPageResize();
     }
-  },
+  }
 });
 
 
@@ -74,20 +75,20 @@ L.make.NotesNormView = L.make.NotesView.extend({
     return _.filter(
       this.collection.models,
       function(note) {
-	var contents = note.get('contents');
-	return contents.length === 0 || contents[0] !== '!';
+        var contents = note.get('contents');
+        return contents.length === 0 || contents[0] !== '!';
       });
   },
   addNoteToView: function(note) {
     var contents = note.get('contents');
     if (contents.length === 0 || contents[0] !== '!') {
       var noteView = new L.make.NoteView({
-	model: note
+        model: note
       });
       if (note.get('prepend')) {
-	$('#entries').prepend(noteView.render());
+        $('#entries').prepend(noteView.render());
       } else {
-	$('#entries').append(noteView.render());
+        $('#entries').append(noteView.render());
       }
       L.fixPageResize();
     }
@@ -99,5 +100,5 @@ L.make.NotesNormView = L.make.NotesView.extend({
     setTimeout(function() {
       this_.fixNotesHeight_(this_.getNotes());
     }, 1);
-  },
+  }
 });

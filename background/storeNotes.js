@@ -95,12 +95,12 @@ db.nstore.getUndeletedNotes = function(continuation) {
     if (note.jid === -1) {
       magicNote = note;
     } else if ((note.deleted === true ||
-        note.deleted === 'true' ||
-        note.deleted === 1) || note.jid < 0) {
-      // Disqualified: deleted / other magic notes!
-    } else {
-      notes.push(note);
-    }
+          note.deleted === 'true' ||
+          note.deleted === 1) || note.jid < 0) {
+            // Disqualified: deleted / other magic notes!
+          } else {
+            notes.push(note);
+          }
   }
 
   debug(magicNote);
@@ -120,18 +120,18 @@ db.nstore.getUndeletedNotes = function(continuation) {
   continuation(notes);
 
   /*
-  notes = _.filter(notes, function(note) {
-    return ((note.jid >= 0) &&
-    (note.deleted === false ||
-    note.deleted === 'false' ||
-    note.deleted === 0));
-  });
+     notes = _.filter(notes, function(note) {
+     return ((note.jid >= 0) &&
+     (note.deleted === false ||
+     note.deleted === 'false' ||
+     note.deleted === 0));
+     });
 
-  notes = _.sortBy(notes, function(note) {
-    return Date.now() - note.created;
-  });
-  continuation(notes);
-  */
+     notes = _.sortBy(notes, function(note) {
+     return Date.now() - note.created;
+     });
+     continuation(notes);
+     */
 };
 
 /**
@@ -142,9 +142,9 @@ db.nstore.getDeletedNotes = function(continuation) {
   var notes = db.nstore.getNoteArray();
   notes = _.filter(notes, function(note) {
     return ((note.jid >= 0) &&
-        (note.deleted === true ||
-         note.deleted === 'true' ||
-         note.deleted === 1));
+      (note.deleted === true ||
+       note.deleted === 'true' ||
+       note.deleted === 1));
   });
   continuation(notes);
 };

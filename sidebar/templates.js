@@ -1,42 +1,43 @@
 var L = L || {};
+/** Template Namespace */
 L.template = L.template || {};
 
 //L.template.note = ;
 
-// CHROME Note Template
+/** CHROME Note Template */
 L.template.webkitNote = doT.template(
-'<div class="note hbox" name="note" id="{{=it.jid }}">'+
-'<div class="left grabable">'+
-  '<img src="{{=it.leftIcon }}">'+
-'</div>'+
-'<div class="middle flex">'+
-  '<div contenteditable="" class="noteContents"'+
+'<div class="note hbox" name="note" id="{{=it.jid }}">' +
+'<div class="left grabable">' +
+  '<img src="{{=it.leftIcon }}">' +
+'</div>' +
+'<div class="middle flex">' +
+  '<div contenteditable="" class="noteContents"' +
     'id="{{=it.jid }}_text" style="height: {{=it.height}}; ">' +
-    '{{=it.contents }}'+
-  '</div>'+
-'</div>'+
+    '{{=it.contents }}' +
+  '</div>' +
+'</div>' +
 '<div class="right">' +
   '<img class="xIcon clickable" style="display:none" src="img/x.png">' +
 '</div></div>');
 
-// FIREFOX Note Template
+/** FIREFOX Note Template */
 L.template.firefoxNote = doT.template(
-'<div class="note hbox" name="note" id="{{=it.jid }}">'+
-'<div class="left grabable">'+
-  '<img src="{{=it.leftIcon }}">'+
-'</div>'+
-'<div class="middle flex">'+
-  '<div contenteditable="" class="noteContents"'+
+'<div class="note hbox" name="note" id="{{=it.jid }}">' +
+'<div class="left grabable">' +
+  '<img src="{{=it.leftIcon }}">' +
+'</div>' +
+'<div class="middle flex">' +
+  '<div contenteditable="" class="noteContents"' +
     'id="{{=it.jid }}_text" style="height: {{=it.height}}; ">' +
-    '{{=it.contents }}'+
-  '</div>'+
-'</div>'+
+    '{{=it.contents }}' +
+  '</div>' +
+'</div>' +
 '<div class="right">' +
   '<img class="xIcon clickable" style="display:none" src="img/x.png">' +
 '</div></div>');
 
- 
-// IconRow for Input Box
+
+/** IconRow for Input Box */
 L.template.iconrow = doT.template(
 '<div class="iconRow hbox">' +
 '  <div class="iconTab box center_box">' +
@@ -48,7 +49,7 @@ L.template.iconrow = doT.template(
   '</div>' +
 '</div>');
 
-// Note Creation Box
+/** Note Creation Box */
 L.template.input = doT.template(
 '<div id="new-note">' +
   '<div id="new-note-desc" class="flex">Search or Create Note</div>' +
@@ -56,7 +57,7 @@ L.template.input = doT.template(
   '{{#L.template.iconrow()}}' +
 '</div>');
 
-// Options Column
+/** Options Column */
 L.template.optioncol = doT.template(
 '<div id="iconContainer">' +
   '<img id="syncIcon" class="settingIcon" src="img/arrowstill.png"' +
@@ -70,7 +71,7 @@ L.template.optioncol = doT.template(
   'title="Minimize Notes">' +
 '</div>');
 
-// Options View (Feature Toggles in Settings Page)
+/** Options View (Feature Toggles in Settings Page) */
 L.template.optionview = doT.template(
   '<div>' +
   '<span class="itemTitle"> Default Settings </span>' +
@@ -90,5 +91,5 @@ L.template.optionview = doT.template(
 );*/
 
 /*L.template.savedsearch = doT.template(
-  
+
 );*/

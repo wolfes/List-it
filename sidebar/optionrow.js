@@ -1,13 +1,17 @@
 /**
- * @filedesc Create's option box for view control icons.
+ * Create's option box for view control icons.
  * Using BackboneJS instead of Google Closure.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var L = L || {};
+/** Maker namespace */
 L.make = L.make || {};
 
+/**
+ * Option row view for sidebar.
+ */
 L.make.OptionRow = Backbone.View.extend({
   tagName: 'div',
   id: 'options',
@@ -26,8 +30,7 @@ L.make.OptionRow = Backbone.View.extend({
   },
   events: {
     'click': 'boxClicked',
-    'click #pin-option': 'pinClicked',
-
+    'click #pin-option': 'pinClicked'
   },
   boxClicked: function(event) {
     if (event.target.id === this.id) {
@@ -35,14 +38,14 @@ L.make.OptionRow = Backbone.View.extend({
     }
   },
   pinClicked: function(event) {
-    this.model.set({pinSelected: !this.model.get('pinSelected')});    
+    this.model.set({pinSelected: !this.model.get('pinSelected')});
   },
   updatePinIcon: function() {
     // Respond to model change.
     debug('Updating pin icon...');
     var pinIcon = $('#pin-option', this.el);
-    var newSrc = pinIcon.attr('src') === 'img/pin.png' ? 
-	  'img/pin_pencil.png' : 'img/pin.png';
+    var newSrc = pinIcon.attr('src') === 'img/pin.png' ?
+        'img/pin_pencil.png' : 'img/pin.png';
     pinIcon.attr('src', newSrc);
   }
 });

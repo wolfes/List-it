@@ -1,16 +1,16 @@
 /**
  * Common settings for turning on/off functionalities.
  *
- * @Author: Wolfe Styke - wstyke@gmail.com
+ * @author: Wolfe Styke - wstyke@gmail.com
  */
 
 var L = L || {};
+/** Settings Namespace */
 L.settings = L.settings || {};
 
-L.settings.FLOAT_URL_MATCHES = true; // Float notes that match url of focused tab.
 
-
-
+/** Float notes that match url of focused tab. */
+L.settings.FLOAT_URL_MATCHES = true;
 
 /**
  * DEFAULTS
@@ -19,4 +19,4 @@ L.settings.FLOAT_URL_MATCHES = true; // Float notes that match url of focused ta
 /**
  * Set true by Firefox add-on.
  */
-L.isFirefoxAddon = false; 
+L.isFirefoxAddon = false;

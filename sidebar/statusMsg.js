@@ -1,20 +1,26 @@
 /**
- * @filedesc Status Message Module for showing messages to user.
+ * Status Message Module for showing messages to user.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
 
 var L = L || {};
+/** Model Namespace */
 L.model = L.model || {};
+/** View Namespace */
 L.view = L.view || {};
+/** Maker Namespace */
 L.make = L.make || {};
 
+/**
+ * Status Model for keeping track of messages to show.
+ */
 L.make.StatusModel = Backbone.Model.extend({
   defaults: {
     msg: '',
     duration: 0
   },
-  initialize: function() { 
+  initialize: function() {
     vent.on('showMsg', function(data) {
       this.showMsg(data.msg, data.duration);
     }, this);
@@ -36,8 +42,8 @@ L.make.StatusModel = Backbone.Model.extend({
     });
     var timerId = setTimeout(function() {
       this_.set({
-	msg: '',
-	duration: 0
+        msg: '',
+        duration: 0
       });
     }, duration);
     this.set('timerId', timerId);
@@ -45,6 +51,9 @@ L.make.StatusModel = Backbone.Model.extend({
 });
 
 
+/**
+ * View for showing status messages.
+ */
 L.make.StatusView = Backbone.View.extend({
   initialize: function() {
     this.render();
@@ -54,10 +63,10 @@ L.make.StatusView = Backbone.View.extend({
     var container = document.createElement('div');
     container.id = 'statusMsg';
     container.className = 'box center_box';
-    
+
     var msgBox = document.createElement('div');
     msgBox.id = 'msgBox';
-    msgBox.innerHTML = "Test Status Message.";
+    msgBox.innerHTML = 'Test Status Message.';
     container.appendChild(msgBox);
     $(this.el).append(container);
   },
@@ -92,7 +101,6 @@ $(document).ready(function() {
     el: $('#page-main'),
     model: L.model.Status
   });
-  
 });
 
 

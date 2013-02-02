@@ -1,5 +1,5 @@
 /**
- * @filedesc Transparent connection from background Model to the View plus
+ * Transparent connection from background Model to the View plus
  *  connection from view to background Controller.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
