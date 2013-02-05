@@ -183,17 +183,17 @@ L.make.AccountView = Backbone.View.extend({
 
 
     // Study Description
-    registerInfoB.innerHTML += '<p class='study_details'>' +
+    registerInfoB.innerHTML += ('<p class=\'study_details\'>' +
       '<b>Contribute to science!</b><br/> ' +
       'We are conducting research on note taking. <br /><br /> ' +
       'If you give us (researchers at MIT) permission to study your notes, ' +
       'you will be helping us better understand how people write ' +
-      'information and enable us to build better tools.</p>';
+      'information and enable us to build better tools.</p>');
 
-    registerInfoB.innerHTML += '<p class=\'study_details\'>If you ' +
+    registerInfoB.innerHTML += ('<p class=\'study_details\'>If you ' +
       'participate, your notes will be kept confidential to ' +
       '<i>the list.it group</i> and will not be divulged to ' +
-      'anyone outside without your explicit (further) permission.</p>';
+      'anyone outside without your explicit (further) permission.</p>');
 
 
     // Study Participation Checkbox.
