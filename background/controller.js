@@ -9,6 +9,46 @@
 /** Module Namespace */
 var controller = controller || {};
 
+
+// Part of Changing Default Open-Sidebar Shortcut
+/**
+ * Set open-sidebar hotkey.
+ * @param {string} hotkey The hotkey to save.
+ */
+controller.setOpenHotkey = function(hotkey) {
+  if (typeof chrome !== 'undefined' && typeof chrome.tabs !== 'undefined') {
+    var oldHotkey = localStorage.getItem('openHotkeyNew');
+    if (oldHotkey === null) {
+      oldHotkey = '';
+    }
+    localStorage.setItem('openHotkeyOld', oldHotkey);
+    localStorage.setItem('openHotkeyNew', hotkey);
+    try {
+      chrome.tabs.executeScript(null, {file: 'background/shortcut.js'});
+    } catch (err) {
+      debug(err);
+    }
+    model.publishNewOpenHotkey({
+      newOpenHotkey: hotkey,
+      oldOpenHotkey: oldHotkey
+    });
+  }
+};
+/**
+ * Returns the last used hotkey for opening sidebar.
+ * @return {string} The previously used hotkey.
+ */
+controller.getOldHotkey = function() {
+  return localStorage.getItem('openHotkeyOld');
+};
+/**
+ * Returns the current hotkey for opening sidebar.
+ * @return {string} The current sidebar opening hotkey.
+ */
+controller.getNewHotkey = function() {
+  return localStorage.getItem('openHotkeyNew');
+};
+
 /**
  * Returns true if app is a chrome extension.
  * @return {boolean} True = app is a chrome extension.
@@ -31,6 +71,24 @@ controller.isBackgroundPage = function(url) {
   var isChromeExt = controller.isChromeExt();
   var isBGPage = url.search('background.html') !== -1;
   return isChromeExt && isBGPage;
+};
+
+
+
+/**
+ * The last focused url that wasn't a chrome extension.
+ * @private
+ */
+controller.lastFocusTab_ = '';
+/**
+ * Returns the last focused url that wasn't a chrome extension.
+ * @return {string} The last non-chrome-extension focused tab url.
+ */
+controller.getFocusedURL = function() {
+  if (controller.lastFocusTab_) {
+    return controller.lastFocusTab_.url;
+  }
+  return '';
 };
 
 /**
@@ -272,6 +330,216 @@ controller.showOptionsPage = function() {
   }
 };
 
+/**
+ * Set up model, syncing, and context menu.
+ */
+controller.setup = function() {
+  // Setup Model.
+  model.setupModel();
+
+  // Sync 1 second after loading to not slow loading speed.
+  setTimeout(function() {
+    // Start syncing Notes every 10 minutes.
+    server.sync();
+    // Start syncing ChromeLogs every 30 minutes.
+    server.syncLogs();
+  }, 1 * 1000);
+
+  if (controller.isChromeExt()) {
+    controller.addContextMenu();
+  }
+
+  // These two onChange listeners record what tab/url currently has focus.
+
+  if (controller.isChromeExt() && typeof chrome === 'object') {
+    // Handles tab selection change within a window:
+    chrome.tabs.onSelectionChanged.addListener(function(tabId, selectInfo) {
+      chrome.tabs.getSelected(selectInfo.windowId, function(tabInfo) {
+        if (tabInfo.url.search('chrome-extension://') === -1) {
+        controller.lastFocusTab_ = tabInfo;
+      }
+      });
+    });
+
+    // Handles window selection change (causing new tab focus):
+    chrome.windows.onFocusChanged.addListener(
+        function(windowId) {
+          if (windowId > 0) {
+            chrome.tabs.getSelected(windowId, function(tabInfo) {
+              if (tabInfo.url.search('chrome-extension://') === -1) {
+              controller.lastFocusTab_ = tabInfo;
+            }
+            });
+          }
+        });
+    // Handles tab selection changing state:
+    chrome.tabs.onUpdated.addListener(
+        function(tabId, changeInfo, tab) {
+          controller.lastFocusTab_ = tab;
+        });
+  }
+};
+
+/**
+ * Set up BG page for Chrome Extension.
+ */
+controller.setupExtBG = function() {
+  // Setup Messenger to sidebars and options pages.
+  sidebar.msg.setupSubscribers();
+  sidebar.mgr.setup();
+  options.setupSubscribers();
+
+  chrome.extension.onRequest.addListener(
+      function(request, sender, sendResponse) {
+        switch (request['action']) {
+          case 'activate':
+            debug('activate request heard');
+            sidebar.mgr.toggle(sender.tab);
+            break;
+          case 'getOpenHotkeyData':
+            sendResponse({
+              oldHotkey: controller.getOldHotkey(),
+              newHotkey: controller.getNewHotkey()
+            });
+            break;
+        }
+      });
+};
+
+$(document).ready(function() {
+  var isChromeExt = controller.isChromeExt();
+  var isBGPage = controller.isBackgroundPage(window.location.href);
+  debug('Chrome Ext:', isChromeExt, ', BG Page:', isBGPage);
+  if (!isChromeExt || isBGPage) {
+    controller.setup();
+    var openHotkey = localStorage.getItem('openHotkeyNew');
+    if (openHotkey === null) {
+      openHotkey = 'Ctrl+Shift+F';
+      localStorage.setItem('openHotkeyNew', openHotkey);
+    }
+    controller.setOpenHotkey(openHotkey);
+  }
+  if (isChromeExt && isBGPage) {
+    controller.setupExtBG();
+  }
+});
+
+/**
+ * Restarts server sync method.
+ */
+controller.sync = function() {
+  server.sync();
+};
+
+/**
+ * Calls controller method with given arguments.
+ * @param {string} methodName The name of the method to call.
+ * @param {Object} args List of method's parameters.
+ */
+controller.callControllerMethod = function(methodName, args) {
+  if (methodName in controller &&
+      typeof(controller[methodName]) === 'function') {
+        controller[methodName].apply(controller, args);
+      }
+};
+
+
+/**
+ * Adds chrome extension's context menu for note creation.
+ * @this
+ */
+controller.addContextMenu = function() {
+  this.cmenu = chrome.contextMenus.create({
+    type: 'normal',
+    title: 'Save to Listit',
+    contexts: ['selection', 'link'],
+    onclick: function(event) {
+      console.log(event);
+      var currTime = Date.now();
+      var note = {
+        //TODO(wstyke): Possible Conflicting JID :(
+        jid: Math.floor(1000000 + Math.random() * 10000000),
+        version: 0,
+        created: currTime,
+        edited: currTime,
+        deleted: 0,
+        contents: event.selectionText + '\n\nFrom: ' + event.pageUrl,
+        meta: JSON.stringify({
+          'url': event.pageUrl
+        }),
+        modified: 1
+      };
+
+      controller.addNote({
+        'note': note,
+        'source': 'contextMenuChrome',
+        'focusOnAdd': false
+      });
+    }
+  });
+};
+
+/**
+ * Asks model to publish undeleted notes.
+ */
+controller.publishUndeletedNotes = function() {
+  model.publishUndeletedNotes();
+};
+
+/**
+ * Asks model to add note and publish update.
+ * @param {object} event Contains info about note-add.
+ */
+controller.addNote = function(event) {
+  model.addNote(event);
+};
+
+/**
+ * Asks model to save note and publish update.
+ * @param {Object} note The note to save.
+ */
+controller.saveNote = function(note) {
+  model.saveNote(note);
+};
+
+/**
+ * Get the ordering of the notes from model.
+ * @return {Object} The note order info.
+ */
+controller.getNoteOrder = function() {
+  return model.getNoteOrder();
+};
+
+/**
+ * Save the ordering of the notes to the model.
+ * @param {Object} note The magical note with ordering info.
+ */
+controller.saveNoteOrder = function(note) {
+  model.saveNoteOrder(note);
+};
+
+/**
+ * Asks model to delete note and publish update.
+ * @param {Object} note The note to delete.
+ */
+controller.deleteNote = function(note) {
+  model.deleteNote(note);
+};
+
+/**
+ * Opens options page for both Chrome Ext. and website.
+ */
+controller.showOptionsPage = function() {
+  if (controller.isChromeExt()) {
+    chrome.tabs.create({
+      url: 'index.html#options_page'
+    });
+  } else { // Show Options
+    gid('page-main').style.display = 'none';
+    gid('page-options').style.display = '';
+  }
+};
+
 // User Login Info
 
 /**
@@ -339,6 +607,47 @@ controller.userSignup = function(email, password, opt_couhes) {
       });
     }
   });
+
+/**
+ * Asks model to log user out of system.
+ */
+controller.logoutUser = function() {
+  model.logoutUser();
+};
+
+/**
+ * Attempts to sign up user with given info.
+ * @param {string} email The user's email.
+ * @param {string} password The user's password.
+ * @param {boolean} opt_couhes True if user consents to study.
+ */
+controller.userSignup = function(email, password, opt_couhes) {
+  server.createUser(email, password, opt_couhes, function(success) {
+    debug('server.createUser() success: ', success);
+    if (success) { // Registration Worked.
+      debug('registration success');
+      model.setValidUserInfo(email, password, opt_couhes);
+      server.sync();
+      controller.addIntroNotes();
+      /*
+         model.publisher.trigger(model.EventType.REGISTER_SUCCESS, {
+         email: email,
+         couhes: opt_couhes
+         });*/
+    } else { // Registration Failed.
+      debug('registration failed');
+      model.publisher.trigger(model.EventType.REGISTER_FAILURE, {
+        email: email
+      });
+    }
+  });
+};
+
+/**
+ * Asks model to publish last sync attempt's success.
+ */
+controller.publishSyncSuccess = function() {
+  model.publishSyncSuccess();
 };
 
 /**
@@ -421,6 +730,21 @@ controller.speakNext = function(textToSpeakNext) {
   chrome.tts.speak(textToSpeakNext, {enqueue: true});
 };
 
+// Experimental: Text-to-Speech !!!
+/**
+ * Speak some text right now.
+ * @param {string} textToSpeakNow The text to speak.
+ */
+controller.speakNow = function(textToSpeakNow) {
+  chrome.tts.speak(textToSpeakNow);
+};
+/**
+ * Queue text to speak after current queued text is spoken.
+ * @param {string} textToSpeakNext The text to speak next.
+ */
+controller.speakNext = function(textToSpeakNext) {
+  chrome.tts.speak(textToSpeakNext, {enqueue: true});
+};
 /**
  * Halt Speaking
  */
