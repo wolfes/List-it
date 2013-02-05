@@ -1,5 +1,5 @@
 /**
- * @filedesc Provides connection to List-it server for note backup/sync.
+ * Provides connection to List-it server for note backup/sync.
  *
  * @author: wstyke@gmail.com - Wolfe Styke
  */
@@ -14,14 +14,25 @@ ajax.DEBUG_MODE = false; //true; //false;
 
 /**
  * Holds timeout for starting next sync event.
+ * @private
  */
 server.syncTimer_ = null;
+/**
+ * Holds timeout for syncing activity logs.
+ * @private
+ */
 server.syncLogTimer_ = null;
 
 /**
  * Default time between sync events.
+ * @private
  */
 server.syncTime_ = 10 * 60 * 1000; // 10 min
+
+/**
+ * Default time between sync events.
+ * @private
+ */
 server.syncLogTime_ = 30 * 60 * 1000; // 30 min
 
 /**
@@ -98,7 +109,7 @@ server.performSync = function() {
         debug('server.js - Sync failed.');
         model.publishSyncSuccess(false);
         return;
-      } 
+      }
 
 
       // Update magic note w/ order:
@@ -153,7 +164,8 @@ server.performSync = function() {
                 newData.numPinned += 1;
               } else if (i > (oldData.noteorder.length - numArchived)) {
                 // old note was archived, add to front of archive list:
-                newData.noteorder.splice(newData.noteorder.length - newData.numArchived, 0, jid);
+                newData.noteorder.splice(
+                  newData.noteorder.length - newData.numArchived, 0, jid);
                 newData.numArchived += 1;
               } else {
                 // old note was in middle, add to front of middle section:
@@ -182,7 +194,8 @@ server.performSync = function() {
       debug('continuing sync...');
 
       /**
-        contents: '{'noteorder':[354486,689087,887008,761910,...,584002,197510]}'
+        contents: '{'noteorder':
+          [354486,689087,887008,761910,...,584002,197510]}'
         created: 1289069025605
         deleted: 1
         edited: 1306504582731
@@ -276,12 +289,13 @@ server.mergeNote_ = function(clientNote, serverNote) {
     }
   }
   return note;
-}
+};
 
 /**
  * Given all notes, bundles note data for server reception.
  * @param {object} allNotes List of notes.
  * @return {object} payload JSON bundled mod/unmod notes to send to server.
+ * @private
  */
 server.bundleNoteData_ = function(allNotes) {
   var modifiedNotes = [];
@@ -320,14 +334,14 @@ server.createUser = function(email, password, couhes, continuation) {
   var lastname = '';
   $.ajax({type: 'POST',
     url: ajax.baseURL_ + 'createuser/',
-    data: ({username: email, password: password, couhes: couhes, 
+    data: ({username: email, password: password, couhes: couhes,
       firstname: firstname, lastname: lastname}),
-    success: function(data,success) {
+    success: function(data, success) {
       // Account Created!
       continuation(true);
     },
     cache: false,
-    error: function(data,status) {
+    error: function(data, status) {
       // Account already exists.
       continuation(false);
     }
@@ -339,12 +353,12 @@ server.createUser = function(email, password, couhes, continuation) {
  * @return {object} locInfo Hash of location information.
  */
 server.getLocInfo = function() {
-  if (window.XMLHttpRequest) { 
-    xmlhttp = new XMLHttpRequest(); 
+  if (window.XMLHttpRequest) {
+    xmlhttp = new XMLHttpRequest();
   } else {
     xmlhttp = new ActiveXObject('Microsoft.XMLHTTP');
   }
-  xmlhttp.open('GET','http://api.hostip.info/get_html.php',false);
+  xmlhttp.open('GET', 'http://api.hostip.info/get_html.php', false);
   try { //TODO(wstyke): Fix debugging hack to be compatible with offline mode.
     xmlhttp.send();
   } catch (e) {
@@ -367,11 +381,11 @@ server.getLocInfo = function() {
  */
 server.pushLogs = function() {
   var logs = model.getAllLogs();
-  var hashPass = model.getUserHashPass(); 
+  var hashPass = model.getUserHashPass();
   var url = 'post_json_chrome_logs/?HTTP_AUTHORIZATION=' + hashPass;
   ajax.postAjax(url, JSON.stringify(logs), function(success, result) {
     if (!success) {
-      debug("FAIL: Logs not sent to server.");
+      debug('FAIL: Logs not sent to server.');
       return;
     }
     model.deleteLogsBefore(result.lastTimeRecorded);
@@ -383,6 +397,7 @@ server.pushLogs = function() {
 
 /**
  * Base url for all ajax requests.
+ * @private
  */
 ajax.baseURL_ = 'http://welist.it/listit/jv3/';
 
@@ -390,10 +405,11 @@ $(document).ready(function() {
   if (typeof window.location.host === 'string' &&
     window.location.host.search(':8000') !== -1) {
       // Use given IP in baseURL if sidebar in browser with port 8000.
-      //ajax.baseURL_ = 'http://' + server.getLocInfo().IP + ':8000/listit/jv3/';
+      //ajax.baseURL_ =
+      // 'http://' + server.getLocInfo().IP + ':8000/listit/jv3/';
       ajax.baseURL_ = 'http://' + window.location.host + '/listit/jv3/';
     }
-  if (ajax.DEBUG_MODE && controller.isChromeExt()) { 
+  if (ajax.DEBUG_MODE && controller.isChromeExt()) {
     ajax.baseURL_ = 'http://' + server.getLocInfo().IP + ':8000/listit/jv3/';
   }
   debug('Base url:', ajax.baseURL_);
@@ -412,7 +428,7 @@ ajax.getAjax = function(urlMethod, continuation) {
       var response;
       if (xhr.status === 200) {
         response = JSON.parse(xhr.responseText);
-      } 
+      }
       continuation(xhr.status, response);
     }
   }
@@ -450,7 +466,7 @@ ajax.postAjax = function(urlMethod, payload, continuation) {
  * @param {function} continuation Called with success + response params.
  */
 ajax.post_json_get_updates = function(payload, continuation) {
-  var hashPass = model.getUserHashPass(); 
+  var hashPass = model.getUserHashPass();
   var url = 'post_json_get_updates/?HTTP_AUTHORIZATION=' + hashPass;
   ajax.postAjax(url, payload, continuation);
 };
@@ -460,7 +476,7 @@ ajax.post_json_get_updates = function(payload, continuation) {
  * @param {function} continuation Called with notes.
  */
 ajax.getNotes = function(continuation) {
-  var hashPass = model.getUserHashPass(); 
+  var hashPass = model.getUserHashPass();
   var url = 'get_json_notes?HTTP_AUTHORIZATION=' + hashPass;
   ajax.getAjax(url, continuation);
 };
@@ -471,7 +487,7 @@ ajax.getNotes = function(continuation) {
  * @param {function} continuation Called with results.
  */
 ajax.postNotes = function(jsonNotes, continuation) {
-  var hashPass = model.getUserHashPass(); 
+  var hashPass = model.getUserHashPass();
   var url = 'post_json_notes/?HTTP_AUTHORIZATION=' + hashPass;
   ajax.postAjax(url, jsonNotes, continuation);
 };

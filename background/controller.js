@@ -65,7 +65,7 @@ controller.isChromeExt = function() {
 
 /**
  * Returns true if script in background page of chrome extension.
- * @param {string} url The url to check.
+ * @param {string} url The page url to check.
  * @return {boolean} True if chrome ext's background page.
  */
 controller.isBackgroundPage = function(url) {
@@ -75,12 +75,26 @@ controller.isBackgroundPage = function(url) {
 };
 
 
+/**
+ * Firefox add-on overwrites this method, so don't clobber.
+ * @param {string} url The url to open.
+ * */
+controller.openTab = controller.openTab || function(url) {
+  if (controller.isChromeExt()) {
+    chrome.tabs.create({
+      url: url
+    });
+  } else { // Show Options
+    window.open(url);
+  }
+};
 
 /**
  * The last focused url that wasn't a chrome extension.
  * @private
  */
-controller.lastFocusTab_ = '';
+ controller.lastFocusTab_ = '';
+
 /**
  * Returns the last focused url that wasn't a chrome extension.
  * @return {string} The last non-chrome-extension focused tab url.
