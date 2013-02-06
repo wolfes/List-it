@@ -5,25 +5,27 @@
  * License : BSD
  */
 var shortcut = {
-  'all_shortcuts':{},//All the shortcuts are stored in this array
-  'add': function(shortcut_combination,callback,opt) {
+  'all_shortcuts': {},//All the shortcuts are stored in this array
+  'add': function(shortcut_combination, callback, opt) {
     //Provide a set of default options
     var default_options = {
-      'type':'keydown',
-      'propagate':false,
-      'disable_in_input':false,
-      'target':document,
-      'keycode':false
-    }
-    if(!opt) opt = default_options;
+      'type': 'keydown',
+      'propagate': false,
+      'disable_in_input': false,
+      'target': document,
+      'keycode': false
+    };
+    if (!opt) opt = default_options;
     else {
-      for(var dfo in default_options) {
-        if(typeof opt[dfo] == 'undefined') opt[dfo] = default_options[dfo];
+      for (var dfo in default_options) {
+        if (typeof opt[dfo] == 'undefined') opt[dfo] = default_options[dfo];
       }
     }
 
     var ele = opt.target;
-    if(typeof opt.target == 'string') ele = document.getElementById(opt.target);
+    if (typeof opt.target == 'string') {
+      ele = document.getElementById(opt.target);
+    }
     var ths = this;
     shortcut_combination = shortcut_combination.toLowerCase();
 
@@ -31,13 +33,14 @@ var shortcut = {
     var func = function(e) {
       e = e || window.event;
 
-      if(opt['disable_in_input']) { //Don't enable shortcut keys in Input, Textarea fields
+      if (opt['disable_in_input']) {
+        //Don't enable shortcut keys in Input, Textarea fields
         var element;
-        if(e.target) element=e.target;
-        else if(e.srcElement) element=e.srcElement;
-        if(element.nodeType==3) element=element.parentNode;
+        if (e.target) element = e.target;
+        else if (e.srcElement) element = e.srcElement;
+        if (element.nodeType == 3) element = element.parentNode;
 
-        if(element.tagName == 'INPUT' || element.tagName == 'TEXTAREA') return;
+        if (element.tagName == 'INPUT' || element.tagName == 'TEXTAREA') return;
       }
 
       //Find Which key is pressed
@@ -45,101 +48,105 @@ var shortcut = {
       else if (e.which) code = e.which;
       var character = String.fromCharCode(code).toLowerCase();
 
-      if(code == 188) character=","; //If the user presses , when the type is onkeydown
-      if(code == 190) character="."; //If the user presses , when the type is onkeydown
+      //If the user presses , when the type is onkeydown
+      if (code == 188) character = ',';
+      // If the user presses , when the type is onkeydown
+      if (code == 190) character = '.';
 
-      var keys = shortcut_combination.split("+");
-      //Key Pressed - counts the number of valid keypresses - if it is same as the number of keys, the shortcut function is invoked
+      var keys = shortcut_combination.split('+');
+      // Key Pressed - counts the number of valid keypresses
+      // if it is same as the number of keys, the shortcut function is invoked
       var kp = 0;
 
-      //Work around for stupid Shift key bug created by using lowercase - as a result the shift+num combination was broken
+      // Work around for stupid Shift key bug created by using lowercase
+      // as a result the shift+num combination was broken
       var shift_nums = {
-        "`":"~",
-        "1":"!",
-        "2":"@",
-        "3":"#",
-        "4":"$",
-        "5":"%",
-        "6":"^",
-        "7":"&",
-        "8":"*",
-        "9":"(",
-        "0":")",
-        "-":"_",
-        "=":"+",
-        ";":":",
-        "'":"\"",
-        ",":"<",
-        ".":">",
-        "/":"?",
-        "\\":"|"
-      }
+        '`': '~',
+        '1': '!',
+        '2': '@',
+        '3': '#',
+        '4': '$',
+        '5': '%',
+        '6': '^',
+        '7': '&',
+        '8': '*',
+        '9': '(',
+        '0': ')',
+        '-': '_',
+        '=': '+',
+        ';': ':',
+        "'": "\'",
+        ',': '<',
+        '.': '>',
+        '/': '?',
+        '\\': '|'
+      };
       //Special Keys - and their codes
       var special_keys = {
-        'esc':27,
-        'escape':27,
-        'tab':9,
-        'space':32,
-        'return':13,
-        'enter':13,
-        'backspace':8,
+        'esc': 27,
+        'escape': 27,
+        'tab': 9,
+        'space': 32,
+        'return': 13,
+        'enter': 13,
+        'backspace': 8,
 
-        'scrolllock':145,
-        'scroll_lock':145,
-        'scroll':145,
-        'capslock':20,
-        'caps_lock':20,
-        'caps':20,
-        'numlock':144,
-        'num_lock':144,
-        'num':144,
+        'scrolllock': 145,
+        'scroll_lock': 145,
+        'scroll': 145,
+        'capslock': 20,
+        'caps_lock': 20,
+        'caps': 20,
+        'numlock': 144,
+        'num_lock': 144,
+        'num': 144,
 
-        'pause':19,
-        'break':19,
+        'pause': 19,
+        'break': 19,
 
-        'insert':45,
-        'home':36,
-        'delete':46,
-        'end':35,
+        'insert': 45,
+        'home': 36,
+        'delete': 46,
+        'end': 35,
 
-        'pageup':33,
-        'page_up':33,
-        'pu':33,
+        'pageup': 33,
+        'page_up': 33,
+        'pu': 33,
 
-        'pagedown':34,
-        'page_down':34,
-        'pd':34,
+        'pagedown': 34,
+        'page_down': 34,
+        'pd': 34,
 
-        'left':37,
-        'up':38,
-        'right':39,
-        'down':40,
+        'left': 37,
+        'up': 38,
+        'right': 39,
+        'down': 40,
 
-        'f1':112,
-        'f2':113,
-        'f3':114,
-        'f4':115,
-        'f5':116,
-        'f6':117,
-        'f7':118,
-        'f8':119,
-        'f9':120,
-        'f10':121,
-        'f11':122,
-        'f12':123
-      }
-
-      var modifiers = { 
-        shift: { wanted:false, pressed:false},
-        ctrl : { wanted:false, pressed:false},
-        alt  : { wanted:false, pressed:false},
-        meta : { wanted:false, pressed:false}	//Meta is Mac specific
+        'f1': 112,
+        'f2': 113,
+        'f3': 114,
+        'f4': 115,
+        'f5': 116,
+        'f6': 117,
+        'f7': 118,
+        'f8': 119,
+        'f9': 120,
+        'f10': 121,
+        'f11': 122,
+        'f12': 123
       };
 
-      if(e.ctrlKey)	modifiers.ctrl.pressed = true;
-      if(e.shiftKey)	modifiers.shift.pressed = true;
-      if(e.altKey)	modifiers.alt.pressed = true;
-      if(e.metaKey)   modifiers.meta.pressed = true;
+      var modifiers = {
+        shift: { wanted: false, pressed: false},
+        ctrl: { wanted: false, pressed: false},
+        alt: { wanted: false, pressed: false},
+        meta: { wanted: false, pressed: false} //Meta is Mac specific
+      };
+
+      if (e.ctrlKey) modifiers.ctrl.pressed = true;
+      if (e.shiftKey) modifiers.shift.pressed = true;
+      if (e.altKey) modifiers.alt.pressed = true;
+      if (e.metaKey) modifiers.meta.pressed = true;
 
       for(var i=0; k=keys[i],i<keys.length; i++) {
         //Modifiers
@@ -225,7 +232,7 @@ var shortcut = {
 
 try {
   if (typeof chrome !== 'undefined') {
-    chrome.extension.sendRequest({'action':'getOpenHotkeyData'}, function(data) {
+    chrome.extension.sendRequest({'action': 'getOpenHotkeyData'}, function(data) {
       // Get old/new hotkey data from background page.
       var oldHotkey = data.oldHotkey;
       var newHotkey = data.newHotkey;
